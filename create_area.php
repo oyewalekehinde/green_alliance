@@ -1,3 +1,20 @@
+<?php session_start();
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Green Alliance";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+// echo "Connected successfully";
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,12 +58,15 @@
   .form-group {
     margin-bottom: 15px;
     align-content: center;
+    font-size: 16px;
+    font-weight: 500;
   }
   label {
     display: block;
     margin-bottom: 5px;
     font-size: 16px;
     font-weight: 500;
+    color: #4F4F4F
   }
   input[type="text"], input[type="password"] {
     width: 100%;
@@ -69,7 +89,7 @@
     background-color: #245843;
     color: white;
     padding: 14px 20px;
-    margin: 8px 0;
+    margin: 20px 0;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -104,6 +124,11 @@
   .signup span {
     color: #245843;
   }
+  .placeholder{
+  color: #A9A9A9; /* Placeholder text color */
+  font-size: 16px;
+  font-weight: 400;
+  }
 
 </style>
 </head>
@@ -111,43 +136,46 @@
 
 <div class="modal">
     <div class="title">
-        <h2>Get Started</h2>
-        <p>Let’s get you started by creating an account</p>
+        <h2>Create Area</h2>
+        <p>Create a new area by filling in the details below</p>
     </div>
-    <form id="loginForm">
+    <form id="createAreaForm" method="post" action="create_area.php">
         <div class="form-group">
-        <label for="email">First Name</label>
-        <input placeholder="Enter your email" type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
+        <label for="address">Address </label>
+        <input placeholder="Enter address" type="text" id="address" name="address" required title="Please enter a valid address">
         </div>
         <div class="form-group">
-        <label for="email">Last Name</label>
-        <input placeholder="Enter your email" type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
-        </div>
-        <div class="form-group">
-        <label for="email">Email Address</label>
-        <input placeholder="Enter your email" type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
-        </div>
-        <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" placeholder="Enter your password" id="password" name="password" required>
-        </div>
-        <input type="submit" value="Get started">
-        <p class="signup">Already have an account? <span>Sign in</span></p>
+        <label for="postcode">Post Code </label>
+        <input placeholder="Enter postcode e.g AL10 9AB" type="text" id="postcode" name="postcode" required title="Please enter a valid postcode">
+        <input type="submit"  name="submit" value="Create Area">
     </form>
 </div>
 
-<script>
-  document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    // Add your validation or form submission logic here
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    if(email && password) {
-      // Proceed with form submission or AJAX request
-      console.log('Form submitted', { email, password });
-    }
-  });
-</script>
+
+<?php
+
+      if (isset($_POST["submit"])) {
+        $address = $_POST["address"];
+        $postcode = $_POST["postcode"];
+        $inert_query = "INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES (NULL, '$address', '$postcode', '1')";
+        $result = $conn->query($inert_query);
+        
+
+        if ($result == true) {
+          $msg  = "result successfully inserted";
+        } else {
+          $msg = "Error:" . $inert_query . "<br>" . $conn->error;;
+        }
+      }else{
+        echo "Form not Submitted";
+      }
+
+      ?>
 
 </body>
+<?php
+if(isset($msg)) {
+    echo "<p>$msg</p>";
+}
+?>
 </html>

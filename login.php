@@ -1,3 +1,21 @@
+<?php session_start();
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "Green Alliance";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+  die("Connection failed: " . $conn->connect_error);
+}
+// echo "Connected successfully";
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,7 +107,7 @@
 
   .title p {
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     color: #828282;
     margin-bottom: 30px;
   }
@@ -103,32 +121,43 @@
 
   .signup span {
     color: #245843;
+    font-size: 16px;
+    font-weight: 600;
   }
+  .form-group{
+    color: #4F4F4F;
+    font-size: 16px;
+    font-weight: 500;
+  }
+
 
 </style>
 </head>
-<body>
 
+
+<body>
 <div class="modal">
     <div class="title">
         <h2>Login</h2>
         <p>Nice to have you here, please login to your account</p>
     </div>
-    <form id="loginForm">
+    <form id="loginForm" method="post" action="login.php">
         <div class="form-group">
-        <label for="email">Email Address:</label>
+        <label for="email">Email</label>
         <input placeholder="Enter your email" type="text" id="email" name="email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
         </div>
         <div class="form-group">
-        <label for="password">Password:</label>
+        <label for="password">Password</label>
         <input type="password" placeholder="Enter your password" id="password" name="password" required>
         </div>
-        <input type="submit" value="Login">
+        <input type="submit"  name="submit" value="Login">
+        
         <p class="signup">Don’t have an account? <span>Sign up</span></p>
     </form>
 </div>
 
-<script>
+
+<!-- <script>
   document.getElementById('loginForm').addEventListener('submit', function(event) {
     event.preventDefault();
     // Add your validation or form submission logic here
@@ -139,7 +168,30 @@
       console.log('Form submitted', { email, password });
     }
   });
-</script>
+</script> -->
+<?php
 
+if(isset($_POST['submit'])) {
+    $name = $_POST['email'];
+    $password = $_POST['password'];
+    $select_query = "SELECT * FROM registration WHERE email='$name' AND password='$password'";
+    $result = $conn->query($select_query);
+    if($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $_SESSION['name'] = $row['name']; 
+        header("Location: index.php");
+        exit;
+    } else {
+        $msg = "Username or password error";
+    }
+}
+?> 
 </body>
+
 </html>
+
+<?php
+if(isset($msg)) {
+    echo "<p>$msg</p>";
+}
+?>
