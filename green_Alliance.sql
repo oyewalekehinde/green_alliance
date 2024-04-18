@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 17, 2024 at 01:22 AM
+-- Generation Time: Apr 18, 2024 at 10:35 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -40,7 +40,10 @@ CREATE TABLE `area` (
 
 INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES
 (1, 'London, United Kingdom', 'LU1 1QR', 1),
-(2, '11b, Oko Awo street, Victoria island', 'se25 5pu', 1);
+(2, '11b, Oko Awo street, Victoria island', 'se25 5pu', 1),
+(3, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
+(4, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
+(5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39);
 
 -- --------------------------------------------------------
 
@@ -53,9 +56,17 @@ CREATE TABLE `company` (
   `name` varchar(50) NOT NULL,
   `phone` varchar(15) NOT NULL,
   `address` text NOT NULL,
-  `product` int(11) NOT NULL,
+  `product` int(11) DEFAULT NULL,
   `user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `company`
+--
+
+INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALUES
+(1, 'Monzo', '', 'Room 7, 32 Downs road', NULL, 67),
+(2, 'Monzo', '07477932119', 'Room 7, 32 Downs road', NULL, 69);
 
 -- --------------------------------------------------------
 
@@ -66,10 +77,12 @@ CREATE TABLE `company` (
 CREATE TABLE `product` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `price` float NOT NULL DEFAULT 0,
   `description` text NOT NULL,
   `size` varchar(15) NOT NULL,
   `benefits` text NOT NULL,
   `pricing_categories` varchar(15) NOT NULL,
+  `class` varchar(50) NOT NULL DEFAULT 'Green energies products',
   `votes` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -77,9 +90,13 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `description`, `size`, `benefits`, `pricing_categories`, `votes`) VALUES
-(1, 'Water bottle', 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', NULL),
-(2, 'Water bottle', 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', NULL);
+INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `votes`) VALUES
+(1, 'Water bottle', 200, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(2, 'Water bottle', 150, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(5, 'Water bottle', 75, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(6, 'Water bottle', 800, 'usage limit test 5nL8fRyTWe', 'Medium', 'it is benefitials', 'Moderate', 'Green energies products', NULL);
 
 -- --------------------------------------------------------
 
@@ -104,35 +121,17 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 (1, 'admin', 'admin', 'admin@greenalliance.com', '12345', 'admin'),
 (2, 'Dolapo', 'Oyewale', 'dolapo@gmail.com', 'qwerty', 'admin'),
 (3, 'Oluwaseun', 'Oyewale', 'oyewalekehinde734@gmail.com', 'qwerty1234', 'admin'),
-(38, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '5353535353', 'resident'),
-(39, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53535', 'resident'),
+(39, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '12345', 'resident'),
 (40, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '335355', 'resident'),
-(41, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '335355', 'resident'),
-(42, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '35535', 'resident'),
-(43, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '535', 'resident'),
-(44, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '535', 'resident'),
-(45, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '4242424', 'resident'),
-(46, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '4242424', 'resident'),
-(47, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '4242424', 'resident'),
-(48, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '4464', 'resident'),
-(49, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(50, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(51, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(52, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(53, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(54, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(55, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(56, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(57, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(58, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(59, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(60, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
-(61, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'resident'),
 (62, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '334343', 'resident'),
 (63, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '334343', 'resident'),
 (64, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', 'qwerty1234', 'resident'),
 (65, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
-(66, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident');
+(66, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
+(67, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
+(68, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
+(69, 'Monzo', 'Monzo', 'tayo@green.com', '123456', 'company'),
+(70, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '22222', 'resident');
 
 -- --------------------------------------------------------
 
@@ -142,14 +141,15 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 
 CREATE TABLE `resident` (
   `id` int(11) NOT NULL,
-  `title` varchar(15) NOT NULL,
+  `title` varchar(15) NOT NULL DEFAULT '',
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
+  `phone` varchar(20) NOT NULL DEFAULT '',
   `area` int(11) DEFAULT NULL,
   `age_group` varchar(50) NOT NULL,
   `gender` varchar(15) NOT NULL,
-  `interest` varchar(100) NOT NULL,
+  `interest` varchar(100) NOT NULL DEFAULT '',
   `voted_product` int(11) DEFAULT NULL,
   `user` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -158,13 +158,14 @@ CREATE TABLE `resident` (
 -- Dumping data for table `resident`
 --
 
-INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `area`, `age_group`, `gender`, `interest`, `voted_product`, `user`) VALUES
-(1, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
-(2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
-(3, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 64),
-(4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(5, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(6, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', NULL, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62);
+INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phone`, `area`, `age_group`, `gender`, `interest`, `voted_product`, `user`) VALUES
+(1, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
+(2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
+(3, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 64),
+(4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
+(5, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
+(6, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', NULL, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
+(7, 'Mr', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '07477932119', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 70);
 
 -- --------------------------------------------------------
 
@@ -235,31 +236,31 @@ ALTER TABLE `vote`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `registration`
 --
 ALTER TABLE `registration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `resident`
 --
 ALTER TABLE `resident`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `vote`
@@ -281,7 +282,7 @@ ALTER TABLE `area`
 -- Constraints for table `company`
 --
 ALTER TABLE `company`
-  ADD CONSTRAINT `company_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `company_ibfk_1` FOREIGN KEY (`product`) REFERENCES `Product` (`id`),
   ADD CONSTRAINT `company_ibfk_2` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 
 --
@@ -289,7 +290,7 @@ ALTER TABLE `company`
 --
 ALTER TABLE `resident`
   ADD CONSTRAINT `resident_ibfk_1` FOREIGN KEY (`area`) REFERENCES `area` (`id`),
-  ADD CONSTRAINT `resident_ibfk_2` FOREIGN KEY (`voted_product`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `resident_ibfk_2` FOREIGN KEY (`voted_product`) REFERENCES `Product` (`id`),
   ADD CONSTRAINT `resident_ibfk_3` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 
 --
@@ -297,7 +298,7 @@ ALTER TABLE `resident`
 --
 ALTER TABLE `vote`
   ADD CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`resident`) REFERENCES `resident` (`id`),
-  ADD CONSTRAINT `vote_ibfk_2` FOREIGN KEY (`product`) REFERENCES `product` (`id`);
+  ADD CONSTRAINT `vote_ibfk_2` FOREIGN KEY (`product`) REFERENCES `Product` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
