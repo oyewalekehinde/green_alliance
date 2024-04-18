@@ -154,7 +154,7 @@ if ($conn->connect_error) {
         }
     </style>
 </head>
-
+<?php include ("./include/session.php"); ?>
 <body>
 
     <div class="modal">
@@ -170,12 +170,12 @@ if ($conn->connect_error) {
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <input placeholder="Enter description" type="text" id="description" name="description" required
-                    title="Enter description">
+                <textarea rows="6" cols="50" id="description" name="description" placeholder="Enter description" required
+                    title="Enter description"></textarea>
             </div>
             <div class="form-group">
                 <label for="amount">Price (GBP):</label>
-                <input type="number" id="amount" name="amount" step="1" min="0" placeholder="Enter amount in pounds">
+                <input type="number" id="amount" name="amount" step="1" min="0" placeholder="Enter amount in pounds", required>
 
             </div>
             <div class="form-group">
@@ -188,8 +188,8 @@ if ($conn->connect_error) {
             </div>
             <div class="form-group">
                 <label for="benefits">Benefits</label>
-                <input placeholder="Enter benefits" type="text" id="benefits" name="benefits" required
-                    title="Enter Benefits">
+                <textarea rows="6" cols="50" id="benefits" name="benefits" required></textarea>
+
             </div>
             <div class="form-group">
                 <label for="pricing">Pricing Categories</label>
@@ -213,7 +213,7 @@ if ($conn->connect_error) {
         $benefits = $_POST["benefits"];
         $pricing = $_POST["pricing"];
         $price =$_POST["amount"];
-        $inert_query = "INSERT INTO `product` (`id`, `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES (NULL, '$name', '$description', '$size', '$benefits', '$pricing','$price')";
+        $inert_query = "INSERT INTO `product` ( `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES ( '$name', '$description', '$size', '$benefits', '$pricing','$price')";
 
         $result = $conn->query($inert_query);
 

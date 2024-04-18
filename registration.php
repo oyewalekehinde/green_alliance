@@ -129,6 +129,11 @@ if ($conn->connect_error) {
   font-size: 16px;
   font-weight: 400;
   }
+  .signIn {
+  color: #245843;
+  font-weight: bold;
+  text-decoration: none;
+}
 
 </style>
 </head>
@@ -157,7 +162,7 @@ if ($conn->connect_error) {
         <input type="password" placeholder="Enter your password" id="password" name="password" required>
         </div>
         <input type="submit"  name="submit" value="Get started">
-        <p class="signup">Already have an account? <span>Sign in</span></p>
+        <p class="signup">Already have an account? <span><a href="index.php" class="signIn">Sign in</a></span></p>
     </form>
 </div>
 <?php

@@ -232,7 +232,13 @@ $templateData = array(
                         </div>
 
                     </th>
-                    <!-- add Empty widget -->
+                    <th>
+                        <div class="form-group">
+                            <label for="phone">Phone </label>
+                            <input placeholder="Phone number" type="text" id="phone" name="phone">
+                        </div>
+                    </th>
+
                 </tr>
                 <tr>
                     <th>
@@ -335,7 +341,8 @@ $templateData = array(
 
 
             <input type="submit" name="submit" value="Create Resident">
-            <p class="signup">Already have an account? <span><?php echo '<a href="logout.php"class="sign_in" >Sign in</a>' ?></span></p>
+            <p class="signup">Already have an account?
+                <span><?php echo '<a href="index.php"class="sign_in" >Sign in</a>' ?></span></p>
         </form>
     </div>
 
@@ -349,6 +356,7 @@ $templateData = array(
         $gender = $_POST["gender"];
         $ageGroup = $_POST["age_group"];
         $area = $_POST["area"];
+        $phone = $_POST["phone"];
         $interest = $_POST["interest"];
         $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$first_name','$last_name','$email','$pass','resident')";
         $result = $conn->query($inert_query);
@@ -357,7 +365,7 @@ $templateData = array(
         if ($result && $result->num_rows > 0) {
             $row = $result->fetch_assoc();
             $userId = $row['id'];
-            $insert_resident = "INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `area`, `age_group`, `gender`, `interest`, `user`,`voted_product`) VALUES (NULL, '$title', '$first_name','$last_name','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId', NULL)";
+            $insert_resident = "INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`,`voted_product`) VALUES (NULL, '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId', NULL)";
             $result = $conn->query($insert_resident);
         }
         if ($result == true) {

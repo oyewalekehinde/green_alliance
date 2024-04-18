@@ -132,6 +132,7 @@ if ($conn->connect_error) {
 
 </style>
 </head>
+<?php include ("./include/session.php"); ?>
 <body>
 
 <div class="modal">
@@ -157,7 +158,8 @@ if ($conn->connect_error) {
       if (isset($_POST["submit"])) {
         $address = $_POST["address"];
         $postcode = $_POST["postcode"];
-        $inert_query = "INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES (NULL, '$address', '$postcode', '1')";
+        $userId=$_SESSION['id'];
+        $inert_query = "INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES (NULL, '$address', '$postcode', '$userId')";
         $result = $conn->query($inert_query);
         
 

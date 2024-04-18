@@ -1,12 +1,4 @@
-<?php
-// Start the session
-session_start();
 
-// Check if the user is not logged in, redirect to index.php
-if (!isset($_SESSION['name'])) {
-    header("Location: login.php");
-    exit; }
-?>
 <?php
 
 $servername = "localhost";
@@ -16,6 +8,13 @@ $dbname = "Green Alliance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
+session_start();
+// Check if the user is not logged in, redirect to index.php
+if (!isset($_SESSION['name'])) {
+    header("Location: index.php");
+    exit; }
+$name = $_SESSION['name'];
+
 
 // Check connection
 if ($conn->connect_error) {
@@ -27,31 +26,21 @@ if ($conn->connect_error) {
 
 
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>HTML LEARNING</title>
-<link href="../style/style.css" rel="stylesheet" type="text/css" />
-</head>
 
 
 
-<body>
+
 
 	<!-- admin header -->
 
-    <div class="header" style= "height=120px">
+    <div class="header" style= "height:120px">
 
-        <div class="logo"><img src="../images/herts.jpg" width="150px" hight="70px"  /></div>
+        <div class="logo"><img src="./images/banner.png" width="150px" hight="70px"  /></div>
 
         <div class="header-right" align="right">
 
         	<div>DATE:</div>
-
+            <h1>Hello, <?php echo $name; ?>!</h1>
             <div>Welcome:Admin      <?php echo '<a href="logout.php">Logout</a>'?></div>
 
         </div>
