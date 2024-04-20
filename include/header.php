@@ -35,7 +35,7 @@ if ($conn->connect_error) {
 
     <div class="header" style= "height:120px">
 
-        <div class="logo"><img src="./images/banner.png" width="150px" hight="70px"  /></div>
+        <div class="logo"><img src="../images/banner.png" width="150px" hight="70px"  /></div>
 
         <div class="header-right" align="right">
 

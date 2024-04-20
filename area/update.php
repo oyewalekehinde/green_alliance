@@ -24,7 +24,6 @@ if ($conn->connect_error) {
   <title>Login Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
@@ -110,7 +109,7 @@ if ($conn->connect_error) {
       background-color: #245843;
       color: white;
       padding: 14px 20px;
-      margin: 8px 0;
+      margin: 20px 0;
       border: none;
       border-radius: 4px;
       cursor: pointer;
@@ -153,112 +152,67 @@ if ($conn->connect_error) {
       font-size: 16px;
       font-weight: 400;
     }
-
-    .signIn {
-      color: #245843;
-      font-weight: bold;
-      text-decoration: none;
-    }
+    .sign_in {
+            color: #245843;
+            font-weight: bold;
+            text-decoration: none;
+            font-family: "Roboto", sans-serif;
+        }
   </style>
 </head>
+<?php include ("./include/session.php"); ?>
 
 <body>
   <?php
-
-  if (isset($_POST["submit"])) {
-    $first_name = $_POST["first_name"];
-    $last_name = $_POST["last_name"];
-    $email = $_POST["email"];
-    $pass = $_POST["password"];
-    $email_query = "SELECT * FROM registration WHERE email='$email'";
-    $result = $conn->query($email_query);
+  if (isset($_GET['update'])) {
+    $id = $_GET['update'];
+    // mysqli_query($conn, "SELECT FROM company WHERE id='$id'");
+    $select_query = "SELECT * FROM area WHERE id='$id'";
+    $result = $conn->query($select_query);
     if ($result && $result->num_rows > 0) {
       $row = $result->fetch_assoc();
-      $string1 = "A user with ";
-      $ng = $row["email"];
-      $string2 = " Exist!";
-      $generated_string = $string1 . $ng . $string2;
-      $msg = $generated_string;
-      ?>
-      <script>
-        Swal.fire({
-          position: "top-end",
-          icon: "error",
-          title: '<?php echo $msg; ?>',
-          showConfirmButton: false,
-          timer: 3000,
-          heightAuto: false,
-          iconColor: "red",
-          width: 600,
-       
-        });
-      </script>
-      <?php
-
-    } else {
-      $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$first_name','$last_name','$email','$pass','council')";
-      $result = $conn->query($inert_query);
-      if ($result == true) {
-        $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
-        $result = $conn->query($select_query);
-        if ($result && $result->num_rows > 0) {
-          $row = $result->fetch_assoc();
-          $_SESSION['name'] = $row['first_name'];
-          $_SESSION['id'] = $row['id'];
-          $_SESSION['role'] = $row['role'];
-          header("Location: dashboard.php");
-          exit;
-        }
-      } else {
-        $msg = $conn->error;
-        ?>
-        <script>
-
-          Swal.fire({
-            position: "top-end",
-            icon: "error",
-            title: <?php echo $msg; ?>,
-            showConfirmButton: false,
-            timer: 1500,
-            heightAuto: false,
-            iconColor: "red",
-          });
-        </script>
-        <?php
-      }
+      $id = $row["id"];
+      $address = $row["address"];
+      $postcode = $row["postcode"];
+      $userId = $_SESSION['id'];
     }
   }
+  if (isset($_POST["submit"])) {
+    $address = $_POST["address"];
+    $postcode = $_POST["postcode"];
+    $userId = $_SESSION['id'];
+    $update_query = "UPDATE `area` SET `address`='$address',`postcode`='$postcode' WHERE`id`= $id";
+    $result = $conn->query($update_query);
+
+
+    if ($result == true) {
+      header("Location: index.php");
+      exit;
+    } }
 
   ?>
   <div class="modal">
     <div class="title">
-      <h2>Get Started</h2>
-      <p>Let’s get you started by creating an account</p>
+      <h2>Create Area</h2>
+      <p>Create a new area by filling in the details below</p>
     </div>
-    <form id="registrationForm" method="post" action="">
+    <form id="createAreaForm" method="post" action="">
       <div class="form-group">
-        <label for="first_name">First Name</label>
-        <input placeholder="Enter your first name" type="text" id="first_name" name="first_name" required
-          title="Please enter a valid name">
+        <label for="address">Address </label>
+        <input placeholder="Enter address" type="text" id="address" name="address" value="<?php echo $address; ?>"
+          required title="Please enter a valid address">
       </div>
       <div class="form-group">
-        <label for="last_name">Last Name</label>
-        <input placeholder="Enter your last name" type="text" id="last_name" name="last_name" required
-          title="Please enter a valid name">
-      </div>
-      <div class="form-group">
-        <label for="email">Email Address</label>
-        <input placeholder="Enter your email" type="text" id="email" name="email" required
-          pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Please enter a valid email address">
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" placeholder="Enter your password" id="password" name="password" required>
-      </div>
-      <input type="submit" name="submit" value="Get started">
-      <p class="signup">Already have an account? <span><a href="index.php" class="signIn">Sign in</a></span></p>
+        <label for="postcode">Post Code </label>
+        <input placeholder="Enter postcode e.g AL10 9AB" type="text" id="postcode" name="postcode"
+          value="<?php echo $postcode; ?>" required title="Please enter a valid postcode">
+        <input type="submit" name="submit" value="Create Area">
+        <p class="signup">
+          <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
+        </p>
     </form>
   </div>
+
 
 
 

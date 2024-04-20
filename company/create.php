@@ -12,6 +12,28 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
+$sql = "SELECT * FROM product";
+$result = mysqli_query($conn, $sql);
+
+// Store data in an array
+$dropdownData = [];
+while ($row = mysqli_fetch_assoc($result)) {
+
+
+    $myMap = [
+        "id" => $row['id'],
+        "name" => $row['name'],
+
+    ];
+    $dropdownData[] = $myMap;
+}
+
+
+// Pass data to the template (replace with your templating method)
+
+$templateData = array(
+    "dropdownOptions" => $dropdownData,
+);
 // echo "Connected successfully";
 
 ?>
@@ -24,6 +46,7 @@ if ($conn->connect_error) {
   <title>Login Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
@@ -163,13 +186,113 @@ if ($conn->connect_error) {
 </head>
 
 <body>
+  <?php
 
+  if (isset($_GET['admin'])) {
+    $fromAdmin = true;
+  }else{
+    $fromAdmin = false;
+  }
+  if (isset($_POST["submit"])) {
+    $company_name = $_POST["company_name"];
+    $address = $_POST["address"];
+    $email = $_POST["email"];
+    $pass = $_POST["password"];
+    $phone = $_POST["phone"];
+    $email_query = "SELECT * FROM registration WHERE email='$email'";
+    $result = $conn->query($email_query);
+    if ($result && $result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      $string1 = "A user with ";
+      $ng = $row["email"];
+      $string2 = " Exist!";
+      $generated_string = $string1 . $ng . $string2;
+      $msg = $generated_string;
+      ?>
+      <script>
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: '<?php echo $msg; ?>',
+          showConfirmButton: false,
+          timer: 3000,
+          heightAuto: false,
+          iconColor: "red",
+          width: 600,
+
+        });
+      </script>
+      <?php
+
+    } else {
+      $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$company_name','$company_name','$email','$pass','company')";
+      $result = $conn->query($inert_query);
+      $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
+      $userResult = $conn->query($select_query);
+      if ($userResult && $userResult->num_rows > 0) {
+        $row = $userResult->fetch_assoc();
+
+        $userId = $row['id'];
+        if (!$fromAdmin) {
+          $_SESSION['name'] = $row['first_name'];
+          $_SESSION['id'] = $row['id'];
+          $_SESSION['role'] = $row['role'];
+        }
+        $insert_company =
+          "INSERT INTO `company` ( `name`, `phone`, `address`,  `user`) VALUES ( '$company_name', '$phone', '$address', $userId)";
+        $result = $conn->query($insert_company);
+        if ($result == true) {
+
+          if ($fromAdmin) {
+            header("Location: index.php");
+          } else {
+            header("Location: ../dashboard.php");
+          }
+          exit;
+
+        } else {
+
+          ?>
+          <script>
+            Swal.fire({
+              position: "top-end",
+              icon: "error",
+              title: "something went wrong",
+              showConfirmButton: false,
+              timer: 1500,
+              heightAuto: false,
+              iconColor: "red",
+            });
+          </script>
+          <?php
+        }
+      } else {
+        $msg = $conn->error;
+        ?>
+        <script>
+          Swal.fire({
+            position: "top-end",
+            icon: "error",
+            title: '<?php echo $msg; ?>',
+            showConfirmButton: false,
+            timer: 1500,
+            heightAuto: false,
+            iconColor: "red",
+          });
+        </script>
+        <?php
+
+      }
+    }
+  }
+
+  ?>
   <div class="modal">
     <div class="title">
       <h2>Get Started</h2>
       <p>Let’s get you started by creating an account</p>
     </div>
-    <form id="registrationForm" method="post" action="create_company.php">
+    <form id="registrationForm" method="post" action="">
       <div class="form-group">
         <label for="company_name">Company Name</label>
         <input placeholder="Enter the company name" type="text" id="company_name" name="company_name" required
@@ -193,49 +316,53 @@ if ($conn->connect_error) {
         <label for="password">Password</label>
         <input type="password" placeholder="Enter your password" id="password" name="password" required>
       </div>
-      <input type="submit" name="submit" value="Get started">
-      <p class="signup">Already have an account?
-        <span><?php echo '<a href="index.php"class="sign_in" >Sign in</a>' ?></span></p>
+      <?php
+      if ($fromAdmin) {
+        ?>
+        <div class="form-group">
+          <label for="product">Product</label>
+
+          <select name="product" required>
+            <option value="">Please select</option>
+
+            <?php foreach ($templateData['dropdownOptions'] as $option): ?>
+              <option value="<?php echo $option["id"]; ?>" <?php if ($selected_value == $option["id"])
+                   echo 'selected'; ?>>
+                <?php echo $option["name"]; ?></option>
+
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <?php
+      }
+      ?>
+      <input type="submit" name="submit" value="<?php if ($fromAdmin) {
+        echo "Create Company";
+      } else {
+        echo "Get started";
+      } ?>">
+      <p class="signup">
+        <?php
+        if (!$fromAdmin) {
+          echo "Already have an account? ";
+        }
+
+        ?>
+
+
+        <span><?php
+        if ($fromAdmin) {
+          echo '<a href="./index.php"class="sign_in" >Back</a>';
+        } else {
+          echo '<a href="../index.php"class="sign_in" >Sign in</a>';
+        }
+        ?></span>
+      </p>
     </form>
   </div>
 
-  <?php
 
-  if (isset($_POST["submit"])) {
-    $company_name = $_POST["company_name"];
-    $address = $_POST["address"];
-    $email = $_POST["email"];
-    $pass = $_POST["password"];
-    $phone = $_POST["phone"];
-    $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$company_name','$company_name','$email','$pass','company')";
-    $result = $conn->query($inert_query);
-    $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
-    $result = $conn->query($select_query);
-    if ($result && $result->num_rows > 0) {
-      $row = $result->fetch_assoc();
-      $userId = $row['id'];
-      $insert_company =
-        "INSERT INTO `company` ( `name`, `phone`, `address`,  `user`) VALUES ( '$company_name', '$phone', '$address', $userId)";
-      $result = $conn->query($insert_company);
-    }
-
-    if ($result == true) {
-      $msg = "result successfully inserted";
-    } else {
-      $msg = "Error:" . $inert_query . "<br>" . $conn->error;
-      ;
-    }
-  } else {
-    echo "Form not Submitted";
-  }
-
-  ?>
 
 </body>
-<?php
-if (isset($msg)) {
-  echo "<p>$msg</p>";
-}
-?>
 
 </html>

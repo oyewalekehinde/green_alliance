@@ -24,6 +24,7 @@ if ($conn->connect_error) {
     <title>Login Page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
@@ -151,18 +152,90 @@ if ($conn->connect_error) {
             /* Placeholder text color */
             font-size: 16px;
             font-weight: 400;
+        }.sign_in {
+            color: #245843;
+            font-weight: bold;
+            text-decoration: none;
+            font-family: "Roboto", sans-serif;
         }
     </style>
 </head>
 <?php include ("./include/session.php"); ?>
+
 <body>
+    <?php
+
+    if (isset($_POST["submit"])) {
+        $name = $_POST["name"];
+        $description = $_POST["description"];
+        $size = $_POST["size"];
+        $benefits = $_POST["benefits"];
+        $pricing = $_POST["pricing"];
+        $price = $_POST["amount"];
+
+        $product_query = "SELECT * FROM `product` WHERE LOWER(`name`)= '$name'";
+        $result = $conn->query($product_query);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $string1 = "A Product with ";
+            $ng = $row["name"];
+            $string2 = " Exist!";
+            $generated_string = $string1 . $ng . $string2;
+            $msg = $generated_string;
+            ?>
+            <script>
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: '<?php echo $msg; ?>',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    heightAuto: false,
+                    iconColor: "red",
+                    width: 600,
+
+                });
+            </script>
+            <?php
+
+        } else {
+
+            $inert_query = "INSERT INTO `product` ( `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES ( '$name', '$description', '$size', '$benefits', '$pricing','$price')";
+
+            $result = $conn->query($inert_query);
+
+
+            if ($result == true) {
+                header("Location: ./index.php");
+             
+            } else {
+               
+          ?>
+          <script>
+            Swal.fire({
+              position: "top-end",
+              icon: "error",
+              title: "something went wrong",
+              showConfirmButton: false,
+              timer: 1500,
+              heightAuto: false,
+              iconColor: "red",
+            });
+          </script>
+          <?php
+            }
+        }
+        
+    } 
+
+    ?>
 
     <div class="modal">
         <div class="title">
             <h2>Let's create a product/service</h2>
             <p>Let’s get you started by creating a product/service</p>
         </div>
-        <form id="createProductForm" method="post" action="create_product.php">
+        <form id="createProductForm" method="post" action="">
             <div class="form-group">
                 <label for="company_name">Name</label>
                 <input placeholder="Enter product/service name" type="text" id="name" name="name" required
@@ -170,17 +243,19 @@ if ($conn->connect_error) {
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea rows="6" cols="50" id="description" name="description" placeholder="Enter description" required
-                    title="Enter description"></textarea>
+                <textarea rows="6" cols="50" id="description" name="description" placeholder="Enter description"
+                    required title="Enter description"></textarea>
             </div>
             <div class="form-group">
                 <label for="amount">Price (GBP):</label>
-                <input type="number" id="amount" name="amount" step="1" min="0" placeholder="Enter amount in pounds", required>
+                <input type="number" id="amount" name="amount" step="1" min="0" placeholder="Enter amount in pounds" ,
+                    required>
 
             </div>
             <div class="form-group">
                 <label for="size">Size</label>
-                <select id="size" name="size">
+                <select id="size" name="size" required>
+                    <option value="">Please select</option>
                     <option value="Small">Small</option>
                     <option value="Medium">Medium</option>
                     <option value="Large">Large</option>
@@ -193,48 +268,21 @@ if ($conn->connect_error) {
             </div>
             <div class="form-group">
                 <label for="pricing">Pricing Categories</label>
-                <select id="pricing" name="pricing">
+                <select id="pricing" name="pricing" required>
+                    <option value="">Please select</option>
                     <option value="Affordable">Affordable</option>
                     <option value="Moderate">Moderate</option>
                     <option value="Premium">Premium</option>
                 </select>
             </div>
-            <input type="submit" name="submit" value="Create">
-
+            <input type="submit" name="submit" value="Create Product">
+            <p class="signup">
+          <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
+        </p>
         </form>
     </div>
 
-    <?php
-
-    if (isset($_POST["submit"])) {
-        $name = $_POST["name"];
-        $description = $_POST["description"];
-        $size = $_POST["size"];
-        $benefits = $_POST["benefits"];
-        $pricing = $_POST["pricing"];
-        $price =$_POST["amount"];
-        $inert_query = "INSERT INTO `product` ( `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES ( '$name', '$description', '$size', '$benefits', '$pricing','$price')";
-
-        $result = $conn->query($inert_query);
-
-
-        if ($result == true) {
-            $msg = "result successfully inserted";
-        } else {
-            $msg = "Error:" . $inert_query . "<br>" . $conn->error;
-            ;
-        }
-    } else {
-        echo "Form not Submitted";
-    }
-
-    ?>
 
 </body>
-<?php
-if (isset($msg)) {
-    echo "<p>$msg</p>";
-}
-?>
 
 </html>

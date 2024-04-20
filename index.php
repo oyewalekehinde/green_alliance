@@ -25,6 +25,9 @@ if ($conn->connect_error) {
   <title>Login Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
     rel="stylesheet">
@@ -63,8 +66,8 @@ if ($conn->connect_error) {
 
     }
 
-    .modal {
-      min-width: 600px;
+    .container {
+      max-width: 50%;
       background-color: #F1F8F4;
       /* light green */
       padding: 64px 40px;
@@ -138,6 +141,7 @@ if ($conn->connect_error) {
       font-size: 16px;
       font-weight: 500;
       text-align: center;
+      margin-top: 20px;
     }
 
     .signup span {
@@ -154,17 +158,19 @@ if ($conn->connect_error) {
 
     .links {
       margin-top: 20px;
+      color: #245843;
     }
 
     .links a {
-      color: #3498db;
+      color: #245843;
       text-decoration: none;
       display: block;
+      font-size: 16px;
       margin-bottom: 5px;
     }
 
     .links a:hover {
-      text-decoration: underline;
+      text-decoration: none;
     }
 
 
@@ -182,12 +188,90 @@ if ($conn->connect_error) {
       text-decoration: none;
       cursor: pointer;
     }
+
+    a:hover {
+      text-decoration: underline;
+      color: #245843;
+
+    }
+
+    button {
+      color: #245843;
+      font-size: 16px;
+      font-weight: 600;
+      display: inline-block;
+      font-weight: bold;
+
+      border: none;
+
+      background-color: transparent;
+      cursor: pointer;
+
+    }
   </style>
 </head>
 
 
 <body>
-  <div class="modal">
+  <?php
+
+  if (isset($_POST['submit'])) {
+    $name = $_POST['email'];
+    $password = $_POST['password'];
+    $select_query = "SELECT * FROM registration WHERE email='$name' AND password='$password'";
+    $result = $conn->query($select_query);
+    if ($result && $result->num_rows > 0) {
+      $row = $result->fetch_assoc();
+      $_SESSION['name'] = $row['first_name'];
+      $_SESSION['id'] = $row['id'];
+      $_SESSION['role'] = $row['role'];
+      header("Location: dashboard.php");
+      exit;
+    } else {
+      ?>
+      <script>
+
+        Swal.fire({
+          position: "top-end",
+          icon: "error",
+          title: "Incorrect login Details",
+          showConfirmButton: false,
+          timer: 1500,
+          heightAuto:false,
+          iconColor: "red",
+        });
+      </script>
+      <?php
+      // $msg = "<script></script>";
+//       header("Location: index.php");
+// exit;
+    }
+  }
+  ?>
+
+  <div class="modal fade" id="insertData" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="insertDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" , style="max-width:75%;">
+        <div class="modal-body">
+          <div class="links">
+            <a href="./resident/create.php">Sign up as a Resident</a>
+            <br>
+            <a href="./company/create.php">Sign up as a company</a>
+            <br>
+            <a href="registration.php">Sign up as a local council</a>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary" ,
+            style="background-color:  #245843;border-color: #245843;">Understood</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
     <div class="title">
       <h2>Login</h2>
       <p>Nice to have you here, please login to your account</p>
@@ -203,43 +287,17 @@ if ($conn->connect_error) {
         <input type="password" placeholder="Enter your password" id="password" name="password" required>
       </div>
       <input type="submit" name="submit" value="Login">
+      <p class="signup">Don't have an
+        account?<span><?php echo '<button type="button" data-bs-toggle="modal" data-bs-target="#insertData">Sign up</button>' ?></span>
+      </p>
     </form>
-    <?php
 
-    if (isset($_POST['submit'])) {
-      $name = $_POST['email'];
-      $password = $_POST['password'];
-      $select_query = "SELECT * FROM registration WHERE email='$name' AND password='$password'";
-      $result = $conn->query($select_query);
-      if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $_SESSION['name'] = $row['first_name'];
-        $_SESSION['id'] = $row['id'];
-         $_SESSION['role'] = $row['role'];
-        header("Location: dashboard.php");
-        exit;
-      } else {
-        $msg = "Username or password error";
-      }
-    }
-    ?>
-  </div>
-  <div class="links">
-    <a href="create_resident.php">Sign up as a Resident</a>
-    <br>
-    <a href="create_company.php">Sign up as a company</a>
-    <br>
-    <a href="registration.php">Sign up as a local council</a>
   </div>
 
-
-
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
 </body>
-<?php
-if (isset($msg)) {
-  echo "<p>$msg</p>";
-}
-?>
+
 
 </html>

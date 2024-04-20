@@ -7,53 +7,40 @@ $dbname = "Green Alliance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-$areaCount = "SELECT COUNT(*) as total FROM area";
-$result = $conn->query($areaCount);
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $areaCount = $row['total'];
-} else {
-    $areaCount = 0;
-}
-$companyCount = "SELECT COUNT(*) as total FROM company";
-$companyResult = $conn->query($companyCount);
-if ($companyResult->num_rows > 0) {
-    $companyRow = $companyResult->fetch_assoc();
-    $totalCompanies = $companyRow['total'];
-} else {
-    $totalCompanies = 0;
-}
-$productCount = "SELECT COUNT(*) as total FROM product";
-$productResult = $conn->query($productCount);
-if ($productResult->num_rows > 0) {
-    $productRow = $productResult->fetch_assoc();
-    $totalProducts = $productRow['total'];
-} else {
-    $totalProducts = 0;
-}
+$companyListQuery = "SELECT * FROM `company`";
+$companyListResult = $conn->query($companyListQuery);
+$companyListData = [];
+if ($companyListResult->num_rows > 0) {
+    while ($row = $companyListResult->fetch_assoc()) {
 
-$voteCount = "SELECT COUNT(*) as total FROM vote";
-$voteResult = $conn->query($voteCount);
-if ($voteResult->num_rows > 0) {
-    $voteRow = $voteResult->fetch_assoc();
-    $totalVotes = $voteRow['total'];
+        $companyAddress = $row['address'];
+        $companyName = $row['name'];
+        $companyId = $row['id'];
+        $companyPhone = $row['phone'];
+        $myMap = [
+            "id" => $companyId,
+            "name" => $companyName,
+            "address" => $companyAddress,
+            "phone" => $companyPhone,
+
+        ];
+        $companyListData[] = $myMap;
+        // Perform operations with resident data as needed
+    }
 } else {
-    $totalVotes = 0;
+    // Handle case where no residents are found
 }
-$residentCount = "SELECT COUNT(*) as total FROM resident";
-$residentResult = $conn->query($residentCount);
-if ($residentResult->num_rows > 0) {
-    $residentRow = $residentResult->fetch_assoc();
-    $totalResidents = $residentRow['total'];
-} else {
-    $totalResidents = 0;
-}
+$templateData = array(
+    "result" => $companyListData,
+);
+
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 // echo "Connected successfully";
+
 
 ?>
 
@@ -66,6 +53,7 @@ if ($conn->connect_error) {
     <title>Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
@@ -93,7 +81,7 @@ if ($conn->connect_error) {
         }
 
         .sidebar {
-            width: 240px;
+            width: 300px;
             padding: 20px;
             flex-direction: column;
             display: flex;
@@ -136,19 +124,20 @@ if ($conn->connect_error) {
         }
 
         .submit-btn:hover {
-        background-color: #45a049;
+            background-color: #45a049;
         }
 
-        thead, tbody {
+        thead,
+        tbody {
             width: 100%;
             border-radius: 6px;
         }
-        
+
         thead th {
             padding: 10px;
             color: #5E606A;
         }
-        
+
         thead tr {
             border-bottom: 1px solid #F5F5F6;
         }
@@ -170,17 +159,17 @@ if ($conn->connect_error) {
         }
 
         .filter {
-            display: flex; 
-            gap: 10px; 
-            align-content: center; 
+            display: flex;
+            gap: 10px;
+            align-content: center;
             padding: 10px;
             border: 1px solid #5E606A29;
             border-radius: 4px;
         }
 
         .filter p {
-            color: #666974; 
-            font-size: 16px; 
+            color: #666974;
+            font-size: 16px;
             font-weight: 500;
             margin: 0;
         }
@@ -190,62 +179,67 @@ if ($conn->connect_error) {
         }
     </style>
 </head>
-<?php include ("./include/header.php"); ?>
-<h1>Area Count, <?php echo $areaCount; ?></h1>
-<h1>Company Count, <?php echo $totalCompanies; ?></h1>
-<h1>Product Count, <?php echo $totalProducts; ?></h1>
-<h1>Resident Count, <?php echo $totalResidents; ?></h1>
-<h1>Vote Count, <?php echo $totalVotes; ?></h1>
+
+<?php include ("../include/header.php"); ?>
 
 <body>
+    <?php
+    if (isset($_GET['delete'])) {
+        $id = $_GET['delete'];
+        mysqli_query($conn, "DELETE FROM company WHERE id='$id'");
+        header("Location: index.php");
+        exit;
+    } ?>
     <div class="dashboard-container">
         <div class="sidebar">
-            <img src="./images/banner.png" alt="logo" style="width: 200px; margin: 0 auto 70px; display: block;" />
+            <img src="../images/banner.png" alt="logo" style="width: 200px; margin: 0 auto 70px; display: block;" />
             <?php if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
-                <div class="sidebar-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M7.81377 10.9535H6.13935C4.11331 10.9535 2.99982 9.84 2.99982 7.81395V6.13953C2.99982 4.11349 4.11331 3 6.13935 3H7.81377C9.83982 3 10.9533 4.11349 10.9533 6.13953V7.81395C10.9533 9.84 9.83982 10.9535 7.81377 10.9535ZM6.13935 4.25581C4.81656 4.25581 4.25563 4.81674 4.25563 6.13953V7.81395C4.25563 9.13674 4.81656 9.69767 6.13935 9.69767H7.81377C9.13656 9.69767 9.69749 9.13674 9.69749 7.81395V6.13953C9.69749 4.81674 9.13656 4.25581 7.81377 4.25581H6.13935Z"
-                            fill="white" />
-                        <path
-                            d="M17.8606 10.9535H16.1862C14.1602 10.9535 13.0467 9.84 13.0467 7.81395V6.13953C13.0467 4.11349 14.1602 3 16.1862 3H17.8606C19.8867 3 21.0002 4.11349 21.0002 6.13953V7.81395C21.0002 9.84 19.8867 10.9535 17.8606 10.9535ZM16.1862 4.25581C14.8634 4.25581 14.3025 4.81674 14.3025 6.13953V7.81395C14.3025 9.13674 14.8634 9.69767 16.1862 9.69767H17.8606C19.1834 9.69767 19.7444 9.13674 19.7444 7.81395V6.13953C19.7444 4.81674 19.1834 4.25581 17.8606 4.25581H16.1862Z"
-                            fill="white" />
-                        <path
-                            d="M17.8606 21.0004H16.1862C14.1602 21.0004 13.0467 19.8869 13.0467 17.8608V16.1864C13.0467 14.1604 14.1602 13.0469 16.1862 13.0469H17.8606C19.8867 13.0469 21.0002 14.1604 21.0002 16.1864V17.8608C21.0002 19.8869 19.8867 21.0004 17.8606 21.0004ZM16.1862 14.3027C14.8634 14.3027 14.3025 14.8636 14.3025 16.1864V17.8608C14.3025 19.1836 14.8634 19.7445 16.1862 19.7445H17.8606C19.1834 19.7445 19.7444 19.1836 19.7444 17.8608V16.1864C19.7444 14.8636 19.1834 14.3027 17.8606 14.3027H16.1862Z"
-                            fill="white" />
-                        <path
-                            d="M7.81377 21.0004H6.13935C4.11331 21.0004 2.99982 19.8869 2.99982 17.8608V16.1864C2.99982 14.1604 4.11331 13.0469 6.13935 13.0469H7.81377C9.83982 13.0469 10.9533 14.1604 10.9533 16.1864V17.8608C10.9533 19.8869 9.83982 21.0004 7.81377 21.0004ZM6.13935 14.3027C4.81656 14.3027 4.25563 14.8636 4.25563 16.1864V17.8608C4.25563 19.1836 4.81656 19.7445 6.13935 19.7445H7.81377C9.13656 19.7445 9.69749 19.1836 9.69749 17.8608V16.1864C9.69749 14.8636 9.13656 14.3027 7.81377 14.3027H6.13935Z"
-                            fill="white" />
-                    </svg>
-                    <p>Dashboard</p>
-                </div>
-                <?php
-            }
-            ?>
-
-            <?php
-
-            if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
-                ?>
-                <a href="create_company.php">
+                <a href="../dashboard.php">
                     <div class="sidebar-item">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
-                                d="M14.25 19.5V15C14.25 14.8011 14.171 14.6103 14.0303 14.4697C13.8897 14.329 13.6989 14.25 13.5 14.25H10.5C10.3011 14.25 10.1103 14.329 9.96967 14.4697C9.82902 14.6103 9.75 14.8011 9.75 15V19.5C9.75 19.6989 9.67098 19.8897 9.53033 20.0303C9.38968 20.171 9.19891 20.25 9 20.25H4.5C4.30109 20.25 4.11032 20.171 3.96967 20.0303C3.82902 19.8897 3.75 19.6989 3.75 19.5V10.8281C3.75168 10.7243 3.77411 10.6219 3.81597 10.5269C3.85783 10.4319 3.91828 10.3463 3.99375 10.275L11.4937 3.45936C11.632 3.33287 11.8126 3.26273 12 3.26273C12.1874 3.26273 12.368 3.33287 12.5062 3.45936L20.0062 10.275C20.0817 10.3463 20.1422 10.4319 20.184 10.5269C20.2259 10.6219 20.2483 10.7243 20.25 10.8281V19.5C20.25 19.6989 20.171 19.8897 20.0303 20.0303C19.8897 20.171 19.6989 20.25 19.5 20.25H15C14.8011 20.25 14.6103 20.171 14.4697 20.0303C14.329 19.8897 14.25 19.6989 14.25 19.5Z"
-                                stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                                d="M7.81377 10.9535H6.13935C4.11331 10.9535 2.99982 9.84 2.99982 7.81395V6.13953C2.99982 4.11349 4.11331 3 6.13935 3H7.81377C9.83982 3 10.9533 4.11349 10.9533 6.13953V7.81395C10.9533 9.84 9.83982 10.9535 7.81377 10.9535ZM6.13935 4.25581C4.81656 4.25581 4.25563 4.81674 4.25563 6.13953V7.81395C4.25563 9.13674 4.81656 9.69767 6.13935 9.69767H7.81377C9.13656 9.69767 9.69749 9.13674 9.69749 7.81395V6.13953C9.69749 4.81674 9.13656 4.25581 7.81377 4.25581H6.13935Z"
+                                fill="white" />
+                            <path
+                                d="M17.8606 10.9535H16.1862C14.1602 10.9535 13.0467 9.84 13.0467 7.81395V6.13953C13.0467 4.11349 14.1602 3 16.1862 3H17.8606C19.8867 3 21.0002 4.11349 21.0002 6.13953V7.81395C21.0002 9.84 19.8867 10.9535 17.8606 10.9535ZM16.1862 4.25581C14.8634 4.25581 14.3025 4.81674 14.3025 6.13953V7.81395C14.3025 9.13674 14.8634 9.69767 16.1862 9.69767H17.8606C19.1834 9.69767 19.7444 9.13674 19.7444 7.81395V6.13953C19.7444 4.81674 19.1834 4.25581 17.8606 4.25581H16.1862Z"
+                                fill="white" />
+                            <path
+                                d="M17.8606 21.0004H16.1862C14.1602 21.0004 13.0467 19.8869 13.0467 17.8608V16.1864C13.0467 14.1604 14.1602 13.0469 16.1862 13.0469H17.8606C19.8867 13.0469 21.0002 14.1604 21.0002 16.1864V17.8608C21.0002 19.8869 19.8867 21.0004 17.8606 21.0004ZM16.1862 14.3027C14.8634 14.3027 14.3025 14.8636 14.3025 16.1864V17.8608C14.3025 19.1836 14.8634 19.7445 16.1862 19.7445H17.8606C19.1834 19.7445 19.7444 19.1836 19.7444 17.8608V16.1864C19.7444 14.8636 19.1834 14.3027 17.8606 14.3027H16.1862Z"
+                                fill="white" />
+                            <path
+                                d="M7.81377 21.0004H6.13935C4.11331 21.0004 2.99982 19.8869 2.99982 17.8608V16.1864C2.99982 14.1604 4.11331 13.0469 6.13935 13.0469H7.81377C9.83982 13.0469 10.9533 14.1604 10.9533 16.1864V17.8608C10.9533 19.8869 9.83982 21.0004 7.81377 21.0004ZM6.13935 14.3027C4.81656 14.3027 4.25563 14.8636 4.25563 16.1864V17.8608C4.25563 19.1836 4.81656 19.7445 6.13935 19.7445H7.81377C9.13656 19.7445 9.69749 19.1836 9.69749 17.8608V16.1864C9.69749 14.8636 9.13656 14.3027 7.81377 14.3027H6.13935Z"
+                                fill="white" />
                         </svg>
-                        <p>Company Management</p>
+                        <p>Dashboard</p>
                     </div>
                 </a>
                 <?php
             }
             ?>
+
             <?php
 
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
-                <a href="create_resident.php">
+
+                <div class="sidebar-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M14.25 19.5V15C14.25 14.8011 14.171 14.6103 14.0303 14.4697C13.8897 14.329 13.6989 14.25 13.5 14.25H10.5C10.3011 14.25 10.1103 14.329 9.96967 14.4697C9.82902 14.6103 9.75 14.8011 9.75 15V19.5C9.75 19.6989 9.67098 19.8897 9.53033 20.0303C9.38968 20.171 9.19891 20.25 9 20.25H4.5C4.30109 20.25 4.11032 20.171 3.96967 20.0303C3.82902 19.8897 3.75 19.6989 3.75 19.5V10.8281C3.75168 10.7243 3.77411 10.6219 3.81597 10.5269C3.85783 10.4319 3.91828 10.3463 3.99375 10.275L11.4937 3.45936C11.632 3.33287 11.8126 3.26273 12 3.26273C12.1874 3.26273 12.368 3.33287 12.5062 3.45936L20.0062 10.275C20.0817 10.3463 20.1422 10.4319 20.184 10.5269C20.2259 10.6219 20.2483 10.7243 20.25 10.8281V19.5C20.25 19.6989 20.171 19.8897 20.0303 20.0303C19.8897 20.171 19.6989 20.25 19.5 20.25H15C14.8011 20.25 14.6103 20.171 14.4697 20.0303C14.329 19.8897 14.25 19.6989 14.25 19.5Z"
+                            stroke="white" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <p>Company Management</p>
+                </div>
+
+                <?php
+            }
+            ?>
+            <?php
+
+            if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
+                ?>
+                <a href="../resident/">
                     <div class="sidebar-item">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -263,7 +257,7 @@ if ($conn->connect_error) {
 
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
-                <a href="create_product.php">
+                <a href="../product/">
                     <div class="sidebar-item">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -280,7 +274,7 @@ if ($conn->connect_error) {
 
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
-                <a href="create_area.php">
+                <a href="../area/">
                     <div class="sidebar-item">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -321,7 +315,7 @@ if ($conn->connect_error) {
                 <?php
             }
             ?>
-            <a href="logout.php">
+            <a href="../logout.php">
                 <div class="sidebar-item" style="margin: 100px 0 0;">
 
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -344,75 +338,90 @@ if ($conn->connect_error) {
         </div>
         <div style="width: 100%;">
             <div style="background: white; margin: 20px 40px; padding: 20px;">
+
                 <div style="display: flex; justify-content: space-between;">
-                    <p style="font-size: 18px; font-weight: 500;">Resident Management</p>
-                    <button class="submit-btn">Create</button>
+                    <p style="font-size: 18px; font-weight: 500; color: black;">Company Management</p>
+                    <a href="./create.php?admin"> <button class="submit-btn">Create</button> </a>
                 </div>
+
                 <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
                     <input placeholder="Search" class="search" />
                     <div class="filter">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z" stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path
+                                d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z"
+                                stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875"
+                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <p>Filter</p>
-                    </div>    
+                    </div>
                     <div class="filter">
                         <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3" stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path
+                                d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3"
+                                stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                         <p>Export Table</p>
-                    </div>    
+                    </div>
                 </div>
                 <table class="table" style="width: 100%;">
                     <thead>
                         <tr style="background: #F5F5F6;">
                             <th scope="col" style="text-align: left">S/N</th>
-                            <th scope="col" style="text-align: left">Name</th>
+                            <th scope="col" style="text-align: left">Company Name</th>
+                            <th scope="col" style="text-align: left">Phone</th>
                             <th scope="col" style="text-align: left">Address</th>
-                            <th scope="col" style="text-align: left">Date</th>
-                            <th scope="col" style="text-align: left">Season</th>
                             <th scope="col" style="text-align: left">Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach ($templateData['result'] as $option): ?>
+                            <tr>
+                                <td><?php echo $option["id"]; ?></td>
+                                <td><?php echo $option["name"]; ?></td>
+                                <td><?php echo $option["phone"]; ?></td>
+                                <td><?php echo $option["address"]; ?></td>
+                                <td>
+
+                                    <div style="display: flex; gap: 20px;">
+                                        <a href="update.php?update=<?php echo $option['id'] ?>">
+                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z"
+                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2"
+                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5"
+                                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
+                                        <a href="index.php?delete=<?php echo $option['id']; ?>">
+                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
+                                                    stroke="#F15950" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
+                                       
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                         <tr>
-                            <td>1</td>
-                            <td>The Afrovibe Party</td>
-                            <td>London</td>
-                            <td>April 1, 2024</td>
-                            <td>April 1, 2024</td>
-                            <td>
-                                <div style="display: flex; gap: 20px;">
-                                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5" stroke="#F15950" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </div>
-                            </td>
                         </tr>
+
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            // Add your validation or form submission logic here
-            var email = document.getElementById('email').value;
-            var password = document.getElementById('password').value;
-            if (email && password) {
-                // Proceed with form submission or AJAX request
-                console.log('Form submitted', { email, password });
-            }
-        });
-    </script>
 
 </body>
 

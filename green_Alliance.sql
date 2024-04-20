@@ -3,19 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 18, 2024 at 10:35 PM
+-- Generation Time: Apr 20, 2024 at 03:06 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `Green Alliance`
@@ -40,10 +34,13 @@ CREATE TABLE `area` (
 
 INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES
 (1, 'London, United Kingdom', 'LU1 1QR', 1),
-(2, '11b, Oko Awo street, Victoria island', 'se25 5pu', 1),
+(2, '11b, Oko Awo street, Victoria island', 'SE25 5PU', 1),
 (3, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
 (4, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
-(5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39);
+(5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39),
+(8, 'Room 7, 32 Downs road', 'LU1 1QR', 1),
+(11, '1, prince sola oyewunmi way, ketu', 'LU1 1QR', 1),
+(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1);
 
 -- --------------------------------------------------------
 
@@ -65,8 +62,11 @@ CREATE TABLE `company` (
 --
 
 INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALUES
-(1, 'Monzo', '', 'Room 7, 32 Downs road', NULL, 67),
-(2, 'Monzo', '07477932119', 'Room 7, 32 Downs road', NULL, 69);
+(131, 'Kenny Oyewale', '08028864914', '1 olushola Adewunmi road Ikeja', 3, 1),
+(140, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', 3, 1),
+(142, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', NULL, 100),
+(144, 'Kenny Oyewale', '07477932119', 'GreenWich Stadiumn', NULL, 102),
+(145, 'Revolut', '07477932119', 'Room 7, 32 Downs road', NULL, 105);
 
 -- --------------------------------------------------------
 
@@ -91,12 +91,12 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `votes`) VALUES
-(1, 'Water bottle', 200, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(2, 'Water bottle', 150, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', NULL),
 (4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(5, 'Water bottle', 75, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(6, 'Water bottle', 800, 'usage limit test 5nL8fRyTWe', 'Medium', 'it is benefitials', 'Moderate', 'Green energies products', NULL);
+(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
+(12, 'Oluwaseun Oyewale', 33, 'gregrgf', 'Large', 'fgfdbdbfdb', 'Moderate', 'Green energies products', NULL),
+(13, 'Oluwaseun', 3200, 'dvdvvf', 'Large', 'vfddvdfd', 'Moderate', 'Green energies products', NULL),
+(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,16 +122,36 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 (2, 'Dolapo', 'Oyewale', 'dolapo@gmail.com', 'qwerty', 'admin'),
 (3, 'Oluwaseun', 'Oyewale', 'oyewalekehinde734@gmail.com', 'qwerty1234', 'admin'),
 (39, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '12345', 'resident'),
-(40, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '335355', 'resident'),
-(62, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '334343', 'resident'),
-(63, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '334343', 'resident'),
-(64, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', 'qwerty1234', 'resident'),
 (65, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
 (66, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
 (67, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
 (68, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
 (69, 'Monzo', 'Monzo', 'tayo@green.com', '123456', 'company'),
-(70, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '22222', 'resident');
+(72, 'Revolut', 'Revolut', 'svd', 'vdfvsv', 'company'),
+(81, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'admin'),
+(82, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'council'),
+(83, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'council'),
+(86, 'Oluwaseun', 'Oyewale', 'Red@green.com', 'Qwerretfd', 'council'),
+(88, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'council'),
+(89, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '557757676', 'council'),
+(90, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com44', '33242', 'council'),
+(91, 'Revolut', 'Revolut', 'oyewalekehinde94@gmail.com', 'jbjbbjjbbj', 'company'),
+(92, 'Revolut', 'Revolut', 'oyewalekehinde64@gmail.com', '888778', 'company'),
+(93, 'Revolut', 'Revolut', 'oyewalekehinde39@gmail.com', '886688688', 'company'),
+(94, 'Revolut', 'Revolut', 'oyewalekehin34@gmail.com', '666788', 'company'),
+(95, 'Monzo', 'Monzo', 'oyewalekehinddffdfsffe34@gmail.com', 'ffwwffw', 'company'),
+(96, 'Monzo', 'Monzo', 'oyewalekehindewewedwd34@gmail.com', '332232', 'company'),
+(97, 'Revolut', 'Revolut', 'oyewalekehinde3wwewd4@gmail.com', '223232322', 'company'),
+(98, 'Revolut', 'Revolut', 'oyewalekehindessdsds34@gmail.com', 'sdewew', 'company'),
+(99, 'Revolut', 'Revolut', 'oyewalekehinde454@gmail.com', 'wr4tt3434', 'company'),
+(100, 'Kenny Oyewale', 'Kenny Oyewale', 'oyewalekehie34@gmail.com', '56566555', 'company'),
+(101, 'Simileoluwa Bolajoko', 'Simileoluwa Bolajoko', 'oyewalekehindfessvde34@gmail.com', 's6trerggrrg', 'company'),
+(102, 'Kenny Oyewale', 'Kenny Oyewale', 'oyewalekehindedvdvdv34@gmail.com', '454464364', 'company'),
+(103, 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '664664646', 'resident'),
+(104, 'Oluwaseun', 'Oyewale', 'oyewalekehinde343rdc@gmail.com', '54554', 'resident'),
+(105, 'Revolut', 'Revolut', 'dsddoyewalekehinde34@gmail.com', '35345trgf', 'company'),
+(106, 'dfewfewfewf', 'efewfewfw', 'oyewalekehinde34@gmail.comwefewfew', 'rewrwefewfw', 'council'),
+(107, 'Oluwaseun', 'Oyewale', 'oyewalekehindeedac34@gmail.com', '3555', 'resident');
 
 -- --------------------------------------------------------
 
@@ -163,9 +183,7 @@ INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phon
 (2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
 (3, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 64),
 (4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(5, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(6, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', NULL, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
-(7, 'Mr', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '07477932119', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 70);
+(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', NULL, 103);
 
 -- --------------------------------------------------------
 
@@ -236,31 +254,31 @@ ALTER TABLE `vote`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `registration`
 --
 ALTER TABLE `registration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `resident`
 --
 ALTER TABLE `resident`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `vote`
@@ -300,7 +318,3 @@ ALTER TABLE `vote`
   ADD CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`resident`) REFERENCES `resident` (`id`),
   ADD CONSTRAINT `vote_ibfk_2` FOREIGN KEY (`product`) REFERENCES `Product` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

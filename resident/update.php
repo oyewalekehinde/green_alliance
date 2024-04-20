@@ -53,6 +53,7 @@ $templateData = array(
     <title>Login Page</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
         rel="stylesheet">
@@ -205,13 +206,49 @@ $templateData = array(
 </head>
 
 <body>
+    <?php
+    if (isset($_GET['update'])) {
+        $id = $_GET['update'];
+        // mysqli_query($conn, "SELECT FROM company WHERE id='$id'");
+        $select_query = "SELECT * FROM resident WHERE id='$id'";
+        $result = $conn->query($select_query);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $id = $row["id"];
+            $first_name = $row["first_name"];
+            $last_name = $row["last_name"];
+            $title = $row["title"];
+            $gender = $row["gender"];
+            $ageGroup = $row["age_group"];
+            $area = $row["area"];
+            $phone = $row["phone"];
+            $interest = $row["interest"];
+        }
+    }
+    if (isset($_POST["submit"])) {
+        $first_name = $_POST["first_name"];
+        $last_name = $_POST["last_name"];
+        $title = $_POST["title"];
+        $gender = $_POST["gender"];
+        $ageGroup = $_POST["age_group"];
+        $area = $_POST["area"];
+        $phone = $_POST["phone"];
+        $interest = $_POST["interest"];
+        $update_resident = "UPDATE `resident` SET `title`=' $title',`first_name`=' $first_name',`last_name`=' $last_name',`phone`='$phone',`area`='$area',`age_group`='$ageGroup',`gender`='$gender',`interest`='$interest' WHERE `id` =$id";
+        $result = $conn->query($update_resident);
+
+        if ($result == true) {
+            header("Location: index.php");
+            exit;
+        }
+    }
+    ?>
 
     <div class="modal">
         <div class="title">
-            <h2>Create Resident</h2>
-            <p>Let’s get you started by creating an account</p>
+            <p>Update Resident Record</p>
         </div>
-        <form id="createResidentForm" method="post" action="create_resident.php">
+        <form id="createResidentForm" method="post" action="">
 
             <table>
                 <tr>
@@ -219,12 +256,15 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="title">Title</label>
-                            <select id="title" , name="title">
-                                <option value="Mr">Mr</option>
-                                <option value="Ms">Ms</option>
-                                <option value="Mrs">Mrs</option>
-                                <option value="Dr">Dr</option>
-                                <option value="Prof">Prof</option>
+
+                            <select id="title" , name="title" , required>
+                                <option value="">Please select</option>
+                                <option value="Mr" <?php if ($title == 'Mr')
+                                    echo 'selected'; ?>>Mr</option>
+                                <option value="Ms" <?php if ($title == 'Ms') echo 'selected'; ?>>Ms</option>
+                                <option value="Mrs" <?php if ($title == 'Mrs') echo 'selected'; ?>>Mrs</option>
+                                <option value="Dr"<?php if ($title == 'Dr') echo 'selected'; ?>>Dr</option>
+                                <option value="Prof" <?php if ($title == 'Prof') echo 'selected'; ?>>Prof</option>
                             </select>
 
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
@@ -235,7 +275,7 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="phone">Phone </label>
-                            <input placeholder="Phone number" type="text" id="phone" name="phone">
+                            <input placeholder="Phone number" type="text" id="phone" name="phone" value="<?php echo $phone; ?>">
                         </div>
                     </th>
 
@@ -244,14 +284,14 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="first_name">First Name</label>
-                            <input placeholder="Enter your first name" type="text" id="first_name" name="first_name"
+                            <input placeholder="Enter your first name" type="text" id="first_name" name="first_name" value="<?php echo $first_name; ?>"
                                 required title="Please enter a valid name">
                         </div>
                     </th>
                     <th>
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
-                            <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                            <input placeholder="Enter your last name" type="text" id="last_name" name="last_name" value="<?php echo $last_name; ?>"
                                 required title="Please enter a valid name">
                         </div>
                     </th>
@@ -260,14 +300,15 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="gender">Gender</label>
-                            <select id="gender" name="gender">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Non-binary">Non-binary</option>
-                                <option value="Genderqueer">Genderqueer</option>
-                                <option value="Agender">Agender</option>
-                                <option value="Bigender">Bigender</option>
-                                <option value="Others">Others</option>
+                            <select id="gender" name="gender" required>
+                                <option value="">Please select</option>
+                                <option value="Male" <?php if ($gender == 'Male') echo 'selected'; ?>>Male</option>
+                                <option value="Female" <?php if ($gender == 'Female') echo 'selected'; ?>>Female</option>
+                                <option value="Non-binary" <?php if ($gender == 'Non-binary') echo 'selected'; ?>>Non-binary</option>
+                                <option value="Genderqueer" <?php if ($gender == 'Genderqueer') echo 'selected'; ?>>Genderqueer</option>
+                                <option value="Agender" <?php if ($gender == 'Agender') echo 'selected'; ?>>Agender</option>
+                                <option value="Bigender" <?php if ($gender == 'Bigender') echo 'selected'; ?>>Bigender</option>
+                                <option value="Others" <?php if ($gender == 'Others') echo 'selected'; ?>>Others</option>
                             </select>
 
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
@@ -277,13 +318,14 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="age_group">Age Group</label>
-                            <select id="age_group" , name="age_group">
-                                <option value="Child (0-12)">Child (0-12)</option>
-                                <option value="Teenager (13-19)">Teenager (13-19)</option>
-                                <option value="Young Adult (20-39)">Young Adult (20-39)</option>
-                                <option value="Middle-aged adult (40-64)">Middle-aged adult (40-64)</option>
-                                <option value="Older Adult (65-74)">Older Adult (65-74)</option>
-                                <option value="Senior citizen (74+)">Senior citizen (74+)</option>
+                            <select id="age_group" , name="age_group" required>
+                                <option value="">Please select</option>
+                                <option value="Child (0-12)" <?php if ($ageGroup == 'Child (0-12)') echo 'selected'; ?>>Child (0-12)</option>
+                                <option value="Teenager (13-19)" <?php if ($ageGroup == 'Teenager (13-19)') echo 'selected'; ?>>Teenager (13-19)</option>
+                                <option value="Young Adult (20-39)" <?php if ($ageGroup == 'Young Adult (20-39)') echo 'selected'; ?>>Young Adult (20-39)</option>
+                                <option value="Middle-aged adult (40-64)" <?php if ($ageGroup == 'Middle-aged adult (40-64)') echo 'selected'; ?>>Middle-aged adult (40-64)</option>
+                                <option value="Older Adult (65-74)" <?php if ($ageGroup == 'Older Adult (65-74)') echo 'selected'; ?>>Older Adult (65-74)</option>
+                                <option value="Senior citizen (74+)" <?php if ($ageGroup == 'Senior citizen (74+)') echo 'selected'; ?>>Senior citizen (74+)</option>
                             </select>
 
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
@@ -295,10 +337,14 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="area">Area</label>
-                            <select name="area">
-                                <?php foreach ($templateData['dropdownOptions'] as $option): ?>
-                                    <option value="<?php echo $option["id"]; ?>"><?php echo $option["address"]; ?></option>
-                                <?php endforeach; ?>
+                            
+                            <select name="area" required>
+                                <option value="">Please select</option>
+                                <<?php foreach ($templateData['dropdownOptions'] as $option): ?>
+                        <option value="<?php echo $option["id"]; ?>" <?php if ($area == $option["id"])
+                               echo 'selected'; ?>><?php echo $option["address"]; ?></option>
+
+                    <?php endforeach; ?>
                             </select>
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
@@ -307,12 +353,13 @@ $templateData = array(
                     <th>
                         <div class="form-group">
                             <label for="interest">Interest</label>
-                            <select id="interest" name="interest">
-                                <option value="Renewable Energy">Renewable Energy</option>
-                                <option value="Waste Reduction">Waste Reduction</option>
-                                <option value="Energy">Energy</option>
-                                <option value="Efficiency">Efficiency</option>
-                                <option value="Transportation">Transportation</option>
+                            <select id="interest" name="interest" required>
+                                <option value="">Please select</option>
+                                <option value="Renewable Energy"<?php if ($interest == 'Renewable Energy') echo 'selected'; ?>>Renewable Energy</option>
+                                <option value="Waste Reduction"<?php if ($interest == 'Waste Reduction') echo 'selected'; ?>>Waste Reduction</option>
+                                <option value="Energy"<?php if ($interest == 'Energy') echo 'selected'; ?>>Energy</option>
+                                <option value="Efficiency"<?php if ($interest == 'Efficiency') echo 'selected'; ?>>Efficiency</option>
+                                <option value="Transportation"<?php if ($interest == 'Transportation') echo 'selected'; ?>>Transportation</option>
                             </select>
 
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
@@ -320,71 +367,16 @@ $templateData = array(
                         </div>
                     </th>
                 </tr>
-                <tr>
-                    <th>
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input placeholder="Enter your email" type="text" id="email" name="email" required
-                                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
-                                title="Please enter a valid email address">
-                        </div>
-                    </th>
-                    <th>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" placeholder="Enter your password" id="password" name="password"
-                                required>
-                        </div>
-                    </th>
-                </tr>
+
             </table>
-
-
-            <input type="submit" name="submit" value="Create Resident">
-            <p class="signup">Already have an account?
-                <span><?php echo '<a href="index.php"class="sign_in" >Sign in</a>' ?></span></p>
+            <input type="submit" name="submit" value="Update">
+            <p class="signup">
+                <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
+            </p>
         </form>
     </div>
 
-    <?php
-    if (isset($_POST["submit"])) {
-        $first_name = $_POST["first_name"];
-        $last_name = $_POST["last_name"];
-        $email = $_POST["email"];
-        $pass = $_POST["password"];
-        $title = $_POST["title"];
-        $gender = $_POST["gender"];
-        $ageGroup = $_POST["age_group"];
-        $area = $_POST["area"];
-        $phone = $_POST["phone"];
-        $interest = $_POST["interest"];
-        $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$first_name','$last_name','$email','$pass','resident')";
-        $result = $conn->query($inert_query);
-        $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
-        $result = $conn->query($select_query);
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $userId = $row['id'];
-            $insert_resident = "INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`,`voted_product`) VALUES (NULL, '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId', NULL)";
-            $result = $conn->query($insert_resident);
-        }
-        if ($result == true) {
-            $msg = "result successfully inserted";
-        } else {
-            $msg = "Error:" . $inert_query . "<br>" . $conn->error;
-            ;
-        }
-    } else {
-        echo "Form not Submitted";
-    }
-
-    ?>
 
 </body>
-<?php
-if (isset($msg)) {
-    echo "<p>$msg</p>";
-}
-?>
 
 </html>
