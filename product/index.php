@@ -7,52 +7,61 @@ $dbname = "Green Alliance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-$productListQuery = "SELECT * FROM `product`";
-$productListResult = $conn->query($productListQuery);
+
 $productListData = [];
-
 $user_id = $_SESSION['id'];
-if ($productListResult->num_rows > 0) {
-    while ($row = $productListResult->fetch_assoc()) {
-        $productId = $row['id'];
-        $productName = $row['name'];
-        $productPrice = $row['price'];
-        $productDescription = $row['description'];
-        $productSize = $row['size'];
-        $voteCount = $row['vote_count'];
-        $productBenefits = $row['benefits'];
-        $productPricingCategories = $row['pricing_categories'];
-        $voteValue = "FALSE";
-        $check_vote_query = "SELECT * FROM votes WHERE product = $productId AND user = $user_id";
-        $check_vote_result = $conn->query($check_vote_query);
-        if( $check_vote_result->num_rows > 0) {
-       
-        if ($check_vote_result == true) {
-            if (mysqli_num_rows($check_vote_result) > 0) {
-
-                $voteValue = mysqli_fetch_assoc($check_vote_result)["vote"];
-            }
-        }
-    }
-
-        $myMap = [
-            "id" => $productId,
-            "name" => $productName,
-            "price" => $productPrice,
-            "description" => $productDescription,
-            "size" => $productSize,
-            "benefits" => $productBenefits,
-            "vote" => $voteValue,
-            "pricing_categories" => $productPricingCategories,
-            "vote_count"=> $voteCount,
-
-        ];
-        $productListData[] = $myMap;
-        // Perform operations with resident data as needed
-    }
+$searchName = $_POST['searchName'];
+if (isset($searchName)) {
+    $productListQuery = "SELECT * FROM product WHERE name ='$searchName'";
+    $productListResult = $conn->query($productListQuery);
+    header("Location: index.php");
+    exit;
 } else {
-    // Handle case where no residents are found
+    $productListQuery = "SELECT * FROM `product`";
+    $productListResult = $conn->query($productListQuery);
 }
+    if ($productListResult->num_rows > 0) {
+        while ($row = $productListResult->fetch_assoc()) {
+            $productId = $row['id'];
+            $productName = $row['name'];
+            $productPrice = $row['price'];
+            $productDescription = $row['description'];
+            $productSize = $row['size'];
+            $voteCount = $row['vote_count'];
+            $productBenefits = $row['benefits'];
+            $productPricingCategories = $row['pricing_categories'];
+            $voteValue = "FALSE";
+            $check_vote_query = "SELECT * FROM votes WHERE product = $productId AND user = $user_id";
+            $check_vote_result = $conn->query($check_vote_query);
+            if ($check_vote_result->num_rows > 0) {
+
+                if ($check_vote_result == true) {
+                    if (mysqli_num_rows($check_vote_result) > 0) {
+
+                        $voteValue = mysqli_fetch_assoc($check_vote_result)["vote"];
+                    }
+                }
+            }
+
+            $myMap = [
+                "id" => $productId,
+                "name" => $productName,
+                "price" => $productPrice,
+                "description" => $productDescription,
+                "size" => $productSize,
+                "benefits" => $productBenefits,
+                "vote" => $voteValue,
+                "pricing_categories" => $productPricingCategories,
+                "vote_count" => $voteCount,
+
+            ];
+            $productListData[] = $myMap;
+            // Perform operations with resident data as needed
+        }
+    } else {
+        // Handle case where no residents are found
+    }
+
 $templateData = array(
     "result" => $productListData,
 );
@@ -210,12 +219,7 @@ if ($conn->connect_error) {
         header("Location: index.php");
         exit;
     }
-    if (isset($_GET['search'])) {
-        $id = $_GET['search'];
-        mysqli_query($conn, "SELECT * FROM product WHERE name ='$id'");
-        header("Location: index.php");
-        exit;
-    }
+
     if (isset($_GET['vote'])) {
         $string = $_GET['vote'];
         echo $string;
@@ -249,8 +253,8 @@ if ($conn->connect_error) {
                 echo " 2";
                 $update_count_query = "UPDATE product SET vote_count = vote_count + 1 WHERE id = $product_id";
                 echo " 3";
-            } else  {
-                echo  " 4";
+            } else {
+                echo " 4";
                 $update_count_query = "UPDATE product SET vote_count = vote_count - 1 WHERE id = $product_id";
                 echo " 5";
             }
@@ -421,7 +425,8 @@ if ($conn->connect_error) {
                 </div>
 
                 <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
-                    <input placeholder="Search" class="search" />
+                    <input placeholder="Search" class="search" name="searchName"/>
+                    <button type="submit">search</button>
                     <div class="filter">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
