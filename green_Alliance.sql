@@ -3,13 +3,19 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 20, 2024 at 03:06 AM
+-- Generation Time: Apr 22, 2024 at 04:50 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `Green Alliance`
@@ -40,7 +46,8 @@ INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES
 (5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39),
 (8, 'Room 7, 32 Downs road', 'LU1 1QR', 1),
 (11, '1, prince sola oyewunmi way, ketu', 'LU1 1QR', 1),
-(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1);
+(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1),
+(16, 'Hatfied, London', 'AB12 RED', 1);
 
 -- --------------------------------------------------------
 
@@ -66,7 +73,9 @@ INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALU
 (140, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', 3, 1),
 (142, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', NULL, 100),
 (144, 'Kenny Oyewale', '07477932119', 'GreenWich Stadiumn', NULL, 102),
-(145, 'Revolut', '07477932119', 'Room 7, 32 Downs road', NULL, 105);
+(145, 'Revolut', '07477932119', 'Room 7, 32 Downs road', NULL, 105),
+(146, 'Qwerty Company', '07477932119', 'Room 7, 32 Downs road', 17, 108),
+(147, 'Monzo bank', '07477932119', 'Room 7, 32 Downs road', 4, 111);
 
 -- --------------------------------------------------------
 
@@ -83,20 +92,20 @@ CREATE TABLE `product` (
   `benefits` text NOT NULL,
   `pricing_categories` varchar(15) NOT NULL,
   `class` varchar(50) NOT NULL DEFAULT 'Green energies products',
-  `votes` int(11) DEFAULT NULL
+  `vote_count` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `votes`) VALUES
-(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', NULL),
-(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', NULL),
-(12, 'Oluwaseun Oyewale', 33, 'gregrgf', 'Large', 'fgfdbdbfdb', 'Moderate', 'Green energies products', NULL),
-(13, 'Oluwaseun', 3200, 'dvdvvf', 'Large', 'vfddvdfd', 'Moderate', 'Green energies products', NULL),
-(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', NULL);
+INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `vote_count`) VALUES
+(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', 12),
+(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 7),
+(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 7),
+(12, 'Oluwaseun Oyewale', 33, 'gregrgf', 'Large', 'fgfdbdbfdb', 'Moderate', 'Green energies products', 6),
+(13, 'Oluwaseun', 3200, 'dvdvvf', 'Large', 'vfddvdfd', 'Moderate', 'Green energies products', 6),
+(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', 2);
 
 -- --------------------------------------------------------
 
@@ -151,7 +160,11 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 (104, 'Oluwaseun', 'Oyewale', 'oyewalekehinde343rdc@gmail.com', '54554', 'resident'),
 (105, 'Revolut', 'Revolut', 'dsddoyewalekehinde34@gmail.com', '35345trgf', 'company'),
 (106, 'dfewfewfewf', 'efewfewfw', 'oyewalekehinde34@gmail.comwefewfew', 'rewrwefewfw', 'council'),
-(107, 'Oluwaseun', 'Oyewale', 'oyewalekehindeedac34@gmail.com', '3555', 'resident');
+(107, 'Oluwaseun', 'Oyewale', 'oyewalekehindeedac34@gmail.com', '3555', 'resident'),
+(108, 'Qwerty Company', 'Qwerty Company', 'oyewalekehinde2021@gmail.com', '12345', 'company'),
+(109, 'Patience', 'Kuda', 'patience@gmail.com', '12345', 'resident'),
+(110, 'Kevlin', 'Bamboo', 'kelvin34@gmail.com', '12345', 'resident'),
+(111, 'Monzo bank', 'Monzo bank', 'oyewalekehinde65@gmail.com', '123456', 'company');
 
 -- --------------------------------------------------------
 
@@ -183,20 +196,31 @@ INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phon
 (2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
 (3, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 64),
 (4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', NULL, 103);
+(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', NULL, 103),
+(12, 'Mr', 'Kevlin', 'Bamboo', 'kelvin34@gmail.com', '95050545445', 16, 'Middle-aged adult (40-64)', 'Agender', 'Waste Reduction', NULL, 110);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `vote`
+-- Table structure for table `votes`
 --
 
-CREATE TABLE `vote` (
+CREATE TABLE `votes` (
   `id` int(11) NOT NULL,
   `product` int(11) NOT NULL,
-  `resident` int(11) NOT NULL,
+  `user` int(11) NOT NULL,
   `vote` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `votes`
+--
+
+INSERT INTO `votes` (`id`, `product`, `user`, `vote`) VALUES
+(1, 4, 1, 'FALSE'),
+(2, 3, 1, 'TRUE'),
+(4, 11, 1, 'TRUE'),
+(6, 3, 39, 'TRUE');
 
 --
 -- Indexes for dumped tables
@@ -239,11 +263,11 @@ ALTER TABLE `resident`
   ADD KEY `user` (`user`);
 
 --
--- Indexes for table `vote`
+-- Indexes for table `votes`
 --
-ALTER TABLE `vote`
+ALTER TABLE `votes`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `resident` (`resident`),
+  ADD KEY `resident` (`user`),
   ADD KEY `product` (`product`);
 
 --
@@ -254,13 +278,13 @@ ALTER TABLE `vote`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT for table `product`
@@ -272,19 +296,19 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `registration`
 --
 ALTER TABLE `registration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
 
 --
 -- AUTO_INCREMENT for table `resident`
 --
 ALTER TABLE `resident`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `vote`
+-- AUTO_INCREMENT for table `votes`
 --
-ALTER TABLE `vote`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `votes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
@@ -312,9 +336,13 @@ ALTER TABLE `resident`
   ADD CONSTRAINT `resident_ibfk_3` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 
 --
--- Constraints for table `vote`
+-- Constraints for table `votes`
 --
-ALTER TABLE `vote`
-  ADD CONSTRAINT `vote_ibfk_1` FOREIGN KEY (`resident`) REFERENCES `resident` (`id`),
-  ADD CONSTRAINT `vote_ibfk_2` FOREIGN KEY (`product`) REFERENCES `Product` (`id`);
+ALTER TABLE `votes`
+  ADD CONSTRAINT `votes_ibfk_2` FOREIGN KEY (`product`) REFERENCES `Product` (`id`),
+  ADD CONSTRAINT `votes_ibfk_3` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

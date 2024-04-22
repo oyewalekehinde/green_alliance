@@ -297,6 +297,7 @@ if ($conn->connect_error) {
 
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
+                 <a href="../vote/">
                 <div class="sidebar-item">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -308,6 +309,7 @@ if ($conn->connect_error) {
                     </svg>
                     <p>Vote Management</p>
                 </div>
+            </a>
                 <?php
             }
             ?>

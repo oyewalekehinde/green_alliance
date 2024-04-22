@@ -193,8 +193,7 @@ if ($conn->connect_error) {
   ?>
   <div class="modal">
     <div class="title">
-      <h2>Create Area</h2>
-      <p>Create a new area by filling in the details below</p>
+      <p>Update area by editing the details below</p>
     </div>
     <form id="createAreaForm" method="post" action="">
       <div class="form-group">
@@ -206,7 +205,7 @@ if ($conn->connect_error) {
         <label for="postcode">Post Code </label>
         <input placeholder="Enter postcode e.g AL10 9AB" type="text" id="postcode" name="postcode"
           value="<?php echo $postcode; ?>" required title="Please enter a valid postcode">
-        <input type="submit" name="submit" value="Create Area">
+        <input type="submit" name="submit" value="Update Area">
         <p class="signup">
           <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
         </p>
