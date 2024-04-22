@@ -116,7 +116,8 @@ $templateData = array(
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],
+        select {
             width: 100%;
             padding: 10px 20px;
             margin: 5px 0 10px 0;
@@ -202,6 +203,12 @@ $templateData = array(
             text-decoration: none;
             font-family: "Roboto", sans-serif;
         }
+        
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
     </style>
 </head>
 
@@ -249,126 +256,97 @@ $templateData = array(
             <p>Update Resident Record</p>
         </div>
         <form id="createResidentForm" method="post" action="">
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="title">Title</label>
 
-            <table>
-                <tr>
+                    <select id="title" , name="title" , required>
+                        <option value="">Please select</option>
+                        <option value="Mr" <?php if ($title == 'Mr')
+                            echo 'selected'; ?>>Mr</option>
+                        <option value="Ms" <?php if ($title == 'Ms') echo 'selected'; ?>>Ms</option>
+                        <option value="Mrs" <?php if ($title == 'Mrs') echo 'selected'; ?>>Mrs</option>
+                        <option value="Dr"<?php if ($title == 'Dr') echo 'selected'; ?>>Dr</option>
+                        <option value="Prof" <?php if ($title == 'Prof') echo 'selected'; ?>>Prof</option>
+                    </select>
 
-                    <th>
-                        <div class="form-group">
-                            <label for="title">Title</label>
+                    <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                        required title="Please enter a valid name"> -->
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone </label>
+                    <input placeholder="Phone number" type="text" id="phone" name="phone" value="<?php echo $phone; ?>">
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input placeholder="Enter your first name" type="text" id="first_name" name="first_name" value="<?php echo $first_name; ?>"
+                        required title="Please enter a valid name">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input placeholder="Enter your last name" type="text" id="last_name" name="last_name" value="<?php echo $last_name; ?>"
+                        required title="Please enter a valid name">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Please select</option>
+                        <option value="Male" <?php if ($gender == 'Male') echo 'selected'; ?>>Male</option>
+                        <option value="Female" <?php if ($gender == 'Female') echo 'selected'; ?>>Female</option>
+                        <option value="Non-binary" <?php if ($gender == 'Non-binary') echo 'selected'; ?>>Non-binary</option>
+                        <option value="Genderqueer" <?php if ($gender == 'Genderqueer') echo 'selected'; ?>>Genderqueer</option>
+                        <option value="Agender" <?php if ($gender == 'Agender') echo 'selected'; ?>>Agender</option>
+                        <option value="Bigender" <?php if ($gender == 'Bigender') echo 'selected'; ?>>Bigender</option>
+                        <option value="Others" <?php if ($gender == 'Others') echo 'selected'; ?>>Others</option>
+                    </select>
 
-                            <select id="title" , name="title" , required>
-                                <option value="">Please select</option>
-                                <option value="Mr" <?php if ($title == 'Mr')
-                                    echo 'selected'; ?>>Mr</option>
-                                <option value="Ms" <?php if ($title == 'Ms') echo 'selected'; ?>>Ms</option>
-                                <option value="Mrs" <?php if ($title == 'Mrs') echo 'selected'; ?>>Mrs</option>
-                                <option value="Dr"<?php if ($title == 'Dr') echo 'selected'; ?>>Dr</option>
-                                <option value="Prof" <?php if ($title == 'Prof') echo 'selected'; ?>>Prof</option>
-                            </select>
+                    <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                        required title="Please enter a valid name"> -->
+                </div>
+                <div class="form-group">
+                    <label for="age_group">Age Group</label>
+                    <select id="age_group" , name="age_group" required>
+                        <option value="">Please select</option>
+                        <option value="Child (0-12)" <?php if ($ageGroup == 'Child (0-12)') echo 'selected'; ?>>Child (0-12)</option>
+                        <option value="Teenager (13-19)" <?php if ($ageGroup == 'Teenager (13-19)') echo 'selected'; ?>>Teenager (13-19)</option>
+                        <option value="Young Adult (20-39)" <?php if ($ageGroup == 'Young Adult (20-39)') echo 'selected'; ?>>Young Adult (20-39)</option>
+                        <option value="Middle-aged adult (40-64)" <?php if ($ageGroup == 'Middle-aged adult (40-64)') echo 'selected'; ?>>Middle-aged adult (40-64)</option>
+                        <option value="Older Adult (65-74)" <?php if ($ageGroup == 'Older Adult (65-74)') echo 'selected'; ?>>Older Adult (65-74)</option>
+                        <option value="Senior citizen (74+)" <?php if ($ageGroup == 'Senior citizen (74+)') echo 'selected'; ?>>Senior citizen (74+)</option>
+                    </select>
 
-                            <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
-                                required title="Please enter a valid name"> -->
-                        </div>
+                    <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                        required title="Please enter a valid name"> -->
+                </div>
+                <div class="form-group">
+                    <label for="area">Area</label>
+                    
+                    <select name="area" required>
+                        <option value="">Please select</option>
+                        <<?php foreach ($templateData['dropdownOptions'] as $option): ?>
+                <option value="<?php echo $option["id"]; ?>" <?php if ($area == $option["id"])
+                        echo 'selected'; ?>><?php echo $option["address"]; ?></option>
 
-                    </th>
-                    <th>
-                        <div class="form-group">
-                            <label for="phone">Phone </label>
-                            <input placeholder="Phone number" type="text" id="phone" name="phone" value="<?php echo $phone; ?>">
-                        </div>
-                    </th>
+            <?php endforeach; ?>
+                    </select>
+                    <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                        required title="Please enter a valid name"> -->
+                </div>
+                <div class="form-group">
+                    <label for="interest">Interest</label>
+                    <select id="interest" name="interest" required>
+                        <option value="">Please select</option>
+                        <option value="Renewable Energy"<?php if ($interest == 'Renewable Energy') echo 'selected'; ?>>Renewable Energy</option>
+                        <option value="Waste Reduction"<?php if ($interest == 'Waste Reduction') echo 'selected'; ?>>Waste Reduction</option>
+                        <option value="Energy"<?php if ($interest == 'Energy') echo 'selected'; ?>>Energy</option>
+                        <option value="Efficiency"<?php if ($interest == 'Efficiency') echo 'selected'; ?>>Efficiency</option>
+                        <option value="Transportation"<?php if ($interest == 'Transportation') echo 'selected'; ?>>Transportation</option>
+                    </select>
 
-                </tr>
-                <tr>
-                    <th>
-                        <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input placeholder="Enter your first name" type="text" id="first_name" name="first_name" value="<?php echo $first_name; ?>"
-                                required title="Please enter a valid name">
-                        </div>
-                    </th>
-                    <th>
-                        <div class="form-group">
-                            <label for="last_name">Last Name</label>
-                            <input placeholder="Enter your last name" type="text" id="last_name" name="last_name" value="<?php echo $last_name; ?>"
-                                required title="Please enter a valid name">
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <select id="gender" name="gender" required>
-                                <option value="">Please select</option>
-                                <option value="Male" <?php if ($gender == 'Male') echo 'selected'; ?>>Male</option>
-                                <option value="Female" <?php if ($gender == 'Female') echo 'selected'; ?>>Female</option>
-                                <option value="Non-binary" <?php if ($gender == 'Non-binary') echo 'selected'; ?>>Non-binary</option>
-                                <option value="Genderqueer" <?php if ($gender == 'Genderqueer') echo 'selected'; ?>>Genderqueer</option>
-                                <option value="Agender" <?php if ($gender == 'Agender') echo 'selected'; ?>>Agender</option>
-                                <option value="Bigender" <?php if ($gender == 'Bigender') echo 'selected'; ?>>Bigender</option>
-                                <option value="Others" <?php if ($gender == 'Others') echo 'selected'; ?>>Others</option>
-                            </select>
-
-                            <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
-                                required title="Please enter a valid name"> -->
-                        </div>
-                    </th>
-                    <th>
-                        <div class="form-group">
-                            <label for="age_group">Age Group</label>
-                            <select id="age_group" , name="age_group" required>
-                                <option value="">Please select</option>
-                                <option value="Child (0-12)" <?php if ($ageGroup == 'Child (0-12)') echo 'selected'; ?>>Child (0-12)</option>
-                                <option value="Teenager (13-19)" <?php if ($ageGroup == 'Teenager (13-19)') echo 'selected'; ?>>Teenager (13-19)</option>
-                                <option value="Young Adult (20-39)" <?php if ($ageGroup == 'Young Adult (20-39)') echo 'selected'; ?>>Young Adult (20-39)</option>
-                                <option value="Middle-aged adult (40-64)" <?php if ($ageGroup == 'Middle-aged adult (40-64)') echo 'selected'; ?>>Middle-aged adult (40-64)</option>
-                                <option value="Older Adult (65-74)" <?php if ($ageGroup == 'Older Adult (65-74)') echo 'selected'; ?>>Older Adult (65-74)</option>
-                                <option value="Senior citizen (74+)" <?php if ($ageGroup == 'Senior citizen (74+)') echo 'selected'; ?>>Senior citizen (74+)</option>
-                            </select>
-
-                            <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
-                                required title="Please enter a valid name"> -->
-                        </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        <div class="form-group">
-                            <label for="area">Area</label>
-                            
-                            <select name="area" required>
-                                <option value="">Please select</option>
-                                <<?php foreach ($templateData['dropdownOptions'] as $option): ?>
-                        <option value="<?php echo $option["id"]; ?>" <?php if ($area == $option["id"])
-                               echo 'selected'; ?>><?php echo $option["address"]; ?></option>
-
-                    <?php endforeach; ?>
-                            </select>
-                            <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
-                                required title="Please enter a valid name"> -->
-                        </div>
-                    </th>
-                    <th>
-                        <div class="form-group">
-                            <label for="interest">Interest</label>
-                            <select id="interest" name="interest" required>
-                                <option value="">Please select</option>
-                                <option value="Renewable Energy"<?php if ($interest == 'Renewable Energy') echo 'selected'; ?>>Renewable Energy</option>
-                                <option value="Waste Reduction"<?php if ($interest == 'Waste Reduction') echo 'selected'; ?>>Waste Reduction</option>
-                                <option value="Energy"<?php if ($interest == 'Energy') echo 'selected'; ?>>Energy</option>
-                                <option value="Efficiency"<?php if ($interest == 'Efficiency') echo 'selected'; ?>>Efficiency</option>
-                                <option value="Transportation"<?php if ($interest == 'Transportation') echo 'selected'; ?>>Transportation</option>
-                            </select>
-
-                            <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
-                                required title="Please enter a valid name"> -->
-                        </div>
-                    </th>
-                </tr>
-
-            </table>
+                    <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
+                        required title="Please enter a valid name"> -->
+                </div>
+            </div>
             <input type="submit" name="submit" value="Update">
             <p class="signup">
                 <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>

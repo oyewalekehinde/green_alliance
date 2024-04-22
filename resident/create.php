@@ -116,7 +116,8 @@ $templateData = array(
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],
+        select {
             width: 100%;
             padding: 10px 20px;
             margin: 5px 0 10px 0;
@@ -201,6 +202,12 @@ $templateData = array(
             font-weight: bold;
             text-decoration: none;
             font-family: "Roboto", sans-serif;
+        }
+        
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
     </style>
 </head>
@@ -313,11 +320,7 @@ $templateData = array(
             <p>Let’s get you started by creating an account</p>
         </div>
         <form id="createResidentForm" method="post" action="">
-
-            <table>
-                <tr>
-
-                    <th>
+            <div class="form-container">
                         <div class="form-group">
                             <label for="title">Title</label>
                             <select id="title" , name="title" , required>
@@ -332,34 +335,20 @@ $templateData = array(
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
                         </div>
-
-                    </th>
-                    <th>
                         <div class="form-group">
                             <label for="phone">Phone </label>
                             <input placeholder="Phone number" type="text" id="phone" name="phone">
                         </div>
-                    </th>
-
-                </tr>
-                <tr>
-                    <th>
                         <div class="form-group">
                             <label for="first_name">First Name</label>
                             <input placeholder="Enter your first name" type="text" id="first_name" name="first_name"
                                 required title="Please enter a valid name">
                         </div>
-                    </th>
-                    <th>
                         <div class="form-group">
                             <label for="last_name">Last Name</label>
                             <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name">
                         </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
                         <div class="form-group">
                             <label for="gender">Gender</label>
                             <select id="gender" name="gender" required>
@@ -376,8 +365,6 @@ $templateData = array(
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
                         </div>
-                    </th>
-                    <th>
                         <div class="form-group">
                             <label for="age_group">Age Group</label>
                             <select id="age_group" , name="age_group" required>
@@ -393,10 +380,6 @@ $templateData = array(
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
                         </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
                         <div class="form-group">
                             <label for="area">Area</label>
                             <select name="area" required>
@@ -408,8 +391,6 @@ $templateData = array(
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
                         </div>
-                    </th>
-                    <th>
                         <div class="form-group">
                             <label for="interest">Interest</label>
                             <select id="interest" name="interest" required>
@@ -424,28 +405,19 @@ $templateData = array(
                             <!-- <input placeholder="Enter your last name" type="text" id="last_name" name="last_name"
                                 required title="Please enter a valid name"> -->
                         </div>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
                         <div class="form-group">
                             <label for="email">Email Address</label>
                             <input placeholder="Enter your email" type="text" id="email" name="email" required
                                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
                                 title="Please enter a valid email address">
                         </div>
-                    </th>
-                    <th>
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" placeholder="Enter your password" id="password" name="password"
                                 required>
                         </div>
-                    </th>
-                </tr>
-            </table>
 
-
+            </div>
             <input type="submit" name="submit" value="<?php if ($fromAdmin) {
                 echo "Create Resident";
             } else {

@@ -100,6 +100,7 @@ if ($conn->connect_error) {
             display: flex;
             gap: 10px;
             background: white;
+            min-height: 100vh;
         }
 
         .sidebar-item {
@@ -192,7 +193,6 @@ if ($conn->connect_error) {
         }
     </style>
 </head>
-<?php include ("../include/header.php"); ?>
 
 <body>
     <?php
