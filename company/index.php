@@ -7,9 +7,16 @@ $dbname = "Green Alliance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-$companyListQuery = "SELECT * FROM `company`";
-$companyListResult = $conn->query($companyListQuery);
+
 $companyListData = [];
+$searchName = $_POST['searchName'];
+if (isset($searchName) && strlen($searchName) > 0 && isset($_POST['search'])) {
+    $companyListQuery = "SELECT * FROM company WHERE name LIKE '%$searchName%'";
+    $companyListResult = $conn->query($companyListQuery);
+} else {
+    $companyListQuery = "SELECT * FROM `company`";
+    $companyListResult = $conn->query($companyListQuery);
+}
 if ($companyListResult->num_rows > 0) {
     while ($row = $companyListResult->fetch_assoc()) {
 
@@ -27,8 +34,7 @@ if ($companyListResult->num_rows > 0) {
         $companyListData[] = $myMap;
         // Perform operations with resident data as needed
     }
-} else {
-    // Handle case where no residents are found
+
 }
 $templateData = array(
     "result" => $companyListData,
@@ -50,7 +56,7 @@ if ($conn->connect_error) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Company</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -99,6 +105,10 @@ if ($conn->connect_error) {
             text-decoration: none;
         }
 
+        .active-sidebar {
+            background: #8FC6AA;
+        }
+
         .sidebar-item p {
             color: white;
             font-size: 16px;
@@ -109,6 +119,7 @@ if ($conn->connect_error) {
 
         .dashboard-container {
             display: flex;
+            height: 100vh;
 
         }
 
@@ -177,10 +188,52 @@ if ($conn->connect_error) {
         a {
             text-decoration: none;
         }
+
+        .search-container {
+            position: relative;
+            /* Allow absolute positioning of child elements */
+            display: inline-block;
+            /* Maintain inline behavior for the container */
+        }
+
+        .search-container input[type="text"] {
+            padding-right: 30px;
+            /* Make space for the button */
+            border: 1px solid #ccc;
+            /* Style the input field */
+        }
+
+        .search-container button {
+            position: absolute;
+            /* Position the button absolutely within the container */
+            top: 50%;
+            /* Vertical centering */
+            right: 10px;
+            /* Horizontal positioning from the right edge */
+            transform: translateY(-50%);
+            /* Adjust vertical centering if needed */
+            background-color: transparent;
+            /* Transparent background for a cleaner look */
+            border: none;
+            /* Remove button borders */
+            cursor: pointer;
+            /* Indicate clickable behavior */
+        }
+
+        .search-container button i {
+            /* Style the search icon (replace with your icon class) */
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        .search-container button:hover {
+            /* Button hover effect (optional) */
+            color: #333;
+        }
     </style>
 </head>
 
-<?php include ("../include/header.php"); ?>
+<?php include ("./include/session.php"); ?>
 
 <body>
     <?php
@@ -223,7 +276,7 @@ if ($conn->connect_error) {
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
 
-                <div class="sidebar-item">
+                <div class="sidebar-item active-sidebar">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M14.25 19.5V15C14.25 14.8011 14.171 14.6103 14.0303 14.4697C13.8897 14.329 13.6989 14.25 13.5 14.25H10.5C10.3011 14.25 10.1103 14.329 9.96967 14.4697C9.82902 14.6103 9.75 14.8011 9.75 15V19.5C9.75 19.6989 9.67098 19.8897 9.53033 20.0303C9.38968 20.171 9.19891 20.25 9 20.25H4.5C4.30109 20.25 4.11032 20.171 3.96967 20.0303C3.82902 19.8897 3.75 19.6989 3.75 19.5V10.8281C3.75168 10.7243 3.77411 10.6219 3.81597 10.5269C3.85783 10.4319 3.91828 10.3463 3.99375 10.275L11.4937 3.45936C11.632 3.33287 11.8126 3.26273 12 3.26273C12.1874 3.26273 12.368 3.33287 12.5062 3.45936L20.0062 10.275C20.0817 10.3463 20.1422 10.4319 20.184 10.5269C20.2259 10.6219 20.2483 10.7243 20.25 10.8281V19.5C20.25 19.6989 20.171 19.8897 20.0303 20.0303C19.8897 20.171 19.6989 20.25 19.5 20.25H15C14.8011 20.25 14.6103 20.171 14.4697 20.0303C14.329 19.8897 14.25 19.6989 14.25 19.5Z"
@@ -301,19 +354,19 @@ if ($conn->connect_error) {
 
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
-                 <a href="../vote/">
-                <div class="sidebar-item">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M12 15.75C9.93 15.75 8.25 14.07 8.25 12C8.25 9.93 9.93 8.25 12 8.25C14.07 8.25 15.75 9.93 15.75 12C15.75 14.07 14.07 15.75 12 15.75ZM12 9.75C10.76 9.75 9.75 10.76 9.75 12C9.75 13.24 10.76 14.25 12 14.25C13.24 14.25 14.25 13.24 14.25 12C14.25 10.76 13.24 9.75 12 9.75Z"
-                            fill="white" />
-                        <path
-                            d="M9.29506 21.6258L9.29505 21.6258L9.28974 21.6272C8.78935 21.7623 8.27942 21.6905 7.84725 21.4312L7.84729 21.4312L7.83943 21.4266L6.11942 20.4366L6.11883 20.4363C5.62587 20.1534 5.26895 19.6938 5.11296 19.1305C4.96627 18.5649 5.04116 17.9912 5.32369 17.4988L5.32465 17.4971C5.48974 17.2068 5.60884 16.9075 5.656 16.6178C5.70286 16.33 5.68369 16.0141 5.52135 15.7371C5.21133 15.2083 4.53815 15.03 3.9 15.03C2.71614 15.03 1.75 14.0638 1.75 12.88V11.12C1.75 9.93612 2.71614 8.96998 3.9 8.96998C4.53815 8.96998 5.21133 8.7917 5.52135 8.26284C5.8349 7.72797 5.64497 7.04839 5.32247 6.49903C5.04025 6.00586 4.96658 5.42239 5.11336 4.86793L5.11381 4.86619C5.25952 4.30763 5.61339 3.84901 6.1158 3.56539L6.1158 3.5654L6.11834 3.56395L7.84834 2.57395L7.84837 2.574L7.85501 2.57007C8.74208 2.0441 9.92719 2.34714 10.4696 3.26447L10.4696 3.26448L10.4713 3.26723L10.5893 3.46392C10.92 4.0341 11.4019 4.47498 12.015 4.47498C12.6294 4.47498 13.1119 4.03234 13.4427 3.4605C13.4427 3.46044 13.4428 3.46039 13.4428 3.46033L13.5513 3.27284C13.5516 3.27247 13.5518 3.27209 13.552 3.27172C14.0945 2.34774 15.277 2.04441 16.1739 2.57939L16.1738 2.57944L16.1806 2.58333L17.9006 3.57333L17.9012 3.57366C18.3941 3.85652 18.7511 4.3162 18.907 4.87945C19.0537 5.44507 18.9788 6.01875 18.6963 6.51114L18.6954 6.51283C18.5303 6.80317 18.4112 7.10244 18.364 7.39214C18.3171 7.67997 18.3363 7.99591 18.4987 8.27284C18.8087 8.8017 19.4819 8.97998 20.12 8.97998C21.3039 8.97998 22.27 9.94612 22.27 11.13V12.89C22.27 14.0738 21.3039 15.04 20.12 15.04C19.4818 15.04 18.8087 15.2183 18.4987 15.7471C18.1851 16.282 18.375 16.9616 18.6975 17.5109C18.9824 18.0086 19.0608 18.59 18.9084 19.1354L18.9084 19.1354L18.9062 19.1438C18.7605 19.7023 18.4066 20.1609 17.9042 20.4446L17.9017 20.446L16.1751 21.4341C15.8657 21.6044 15.5395 21.69 15.21 21.69C15.05 21.69 14.8823 21.6674 14.7042 21.6256C14.2097 21.4879 13.8 21.1781 13.5387 20.7427L13.4207 20.546C13.0899 19.9758 12.6081 19.535 11.995 19.535C11.3806 19.535 10.898 19.9777 10.5672 20.5496L10.4592 20.7361C10.4589 20.7366 10.4586 20.7371 10.4583 20.7376C10.1931 21.1868 9.7813 21.5004 9.29506 21.6258ZM13.8567 20.2895L13.8573 20.2905L13.9659 20.4781C13.9661 20.4785 13.9664 20.479 13.9667 20.4794C14.1561 20.81 14.4704 21.043 14.8387 21.1351C15.1931 21.2236 15.5696 21.1838 15.8933 20.9911L17.6199 19.9931C17.9901 19.7795 18.2775 19.4225 18.3931 18.9888C18.5063 18.5644 18.451 18.1178 18.2331 17.7401L18.2322 17.7386C17.7242 16.8652 17.7069 16.0506 18.0341 15.478C18.3586 14.9102 19.0688 14.52 20.09 14.52C21.0061 14.52 21.74 13.7861 21.74 12.87V11.11C21.74 10.2067 21.009 9.45998 20.09 9.45998C19.0688 9.45998 18.3586 9.0698 18.0341 8.50191C17.7069 7.92934 17.7242 7.11476 18.2322 6.24137L18.2331 6.23984C18.451 5.86217 18.5063 5.41559 18.3931 4.99115C18.2776 4.55813 18.0025 4.21595 17.642 3.99415L17.6353 3.98997L17.6283 3.98601L15.903 2.99868C15.2278 2.59474 14.3551 2.83617 13.9595 3.50562L13.9595 3.50561L13.9573 3.50946L13.8473 3.69946L13.8467 3.7005C13.3372 4.58533 12.6503 4.99998 11.99 4.99998C11.3308 4.99998 10.6449 4.58662 10.1357 3.70461L10.0281 3.50902L10.024 3.50156L10.0196 3.49424C9.6304 2.84031 8.76766 2.60925 8.09931 2.99737C8.0991 2.99749 8.0989 2.99761 8.09869 2.99773L6.37014 3.99689C6.37005 3.99694 6.36995 3.99699 6.36986 3.99705C6.36983 3.99706 6.36981 3.99708 6.36978 3.9971C5.99973 4.21071 5.7125 4.56758 5.59688 5.00115C5.4837 5.42559 5.53902 5.87217 5.7569 6.24984L5.75779 6.25137C6.26579 7.12476 6.28306 7.93934 5.95588 8.51191C5.63137 9.0798 4.9212 9.46998 3.9 9.46998C2.98386 9.46998 2.25 10.2038 2.25 11.12V12.88C2.25 13.7833 2.98103 14.53 3.9 14.53C4.9212 14.53 5.63137 14.9202 5.95588 15.4881C6.28306 16.0606 6.26579 16.8752 5.75779 17.7486L5.75691 17.7501C5.53902 18.1278 5.4837 18.5744 5.59688 18.9988C5.71235 19.4318 5.98753 19.774 6.34795 19.9958L6.35474 20L6.36166 20.0039L8.08504 20.9902C8.41615 21.1919 8.80356 21.2351 9.15373 21.1444C9.53454 21.0485 9.836 20.7987 10.0251 20.4932L10.029 20.4869L10.0327 20.4805L10.1422 20.2914C10.1423 20.2912 10.1424 20.2911 10.1424 20.291C10.6537 19.4122 11.3419 18.99 12 18.99C12.6603 18.99 13.3472 19.4046 13.8567 20.2895Z"
-                            stroke="white" />
-                    </svg>
-                    <p>Vote Management</p>
-                </div>
-            </a>
+                <a href="../vote/">
+                    <div class="sidebar-item">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 15.75C9.93 15.75 8.25 14.07 8.25 12C8.25 9.93 9.93 8.25 12 8.25C14.07 8.25 15.75 9.93 15.75 12C15.75 14.07 14.07 15.75 12 15.75ZM12 9.75C10.76 9.75 9.75 10.76 9.75 12C9.75 13.24 10.76 14.25 12 14.25C13.24 14.25 14.25 13.24 14.25 12C14.25 10.76 13.24 9.75 12 9.75Z"
+                                fill="white" />
+                            <path
+                                d="M9.29506 21.6258L9.29505 21.6258L9.28974 21.6272C8.78935 21.7623 8.27942 21.6905 7.84725 21.4312L7.84729 21.4312L7.83943 21.4266L6.11942 20.4366L6.11883 20.4363C5.62587 20.1534 5.26895 19.6938 5.11296 19.1305C4.96627 18.5649 5.04116 17.9912 5.32369 17.4988L5.32465 17.4971C5.48974 17.2068 5.60884 16.9075 5.656 16.6178C5.70286 16.33 5.68369 16.0141 5.52135 15.7371C5.21133 15.2083 4.53815 15.03 3.9 15.03C2.71614 15.03 1.75 14.0638 1.75 12.88V11.12C1.75 9.93612 2.71614 8.96998 3.9 8.96998C4.53815 8.96998 5.21133 8.7917 5.52135 8.26284C5.8349 7.72797 5.64497 7.04839 5.32247 6.49903C5.04025 6.00586 4.96658 5.42239 5.11336 4.86793L5.11381 4.86619C5.25952 4.30763 5.61339 3.84901 6.1158 3.56539L6.1158 3.5654L6.11834 3.56395L7.84834 2.57395L7.84837 2.574L7.85501 2.57007C8.74208 2.0441 9.92719 2.34714 10.4696 3.26447L10.4696 3.26448L10.4713 3.26723L10.5893 3.46392C10.92 4.0341 11.4019 4.47498 12.015 4.47498C12.6294 4.47498 13.1119 4.03234 13.4427 3.4605C13.4427 3.46044 13.4428 3.46039 13.4428 3.46033L13.5513 3.27284C13.5516 3.27247 13.5518 3.27209 13.552 3.27172C14.0945 2.34774 15.277 2.04441 16.1739 2.57939L16.1738 2.57944L16.1806 2.58333L17.9006 3.57333L17.9012 3.57366C18.3941 3.85652 18.7511 4.3162 18.907 4.87945C19.0537 5.44507 18.9788 6.01875 18.6963 6.51114L18.6954 6.51283C18.5303 6.80317 18.4112 7.10244 18.364 7.39214C18.3171 7.67997 18.3363 7.99591 18.4987 8.27284C18.8087 8.8017 19.4819 8.97998 20.12 8.97998C21.3039 8.97998 22.27 9.94612 22.27 11.13V12.89C22.27 14.0738 21.3039 15.04 20.12 15.04C19.4818 15.04 18.8087 15.2183 18.4987 15.7471C18.1851 16.282 18.375 16.9616 18.6975 17.5109C18.9824 18.0086 19.0608 18.59 18.9084 19.1354L18.9084 19.1354L18.9062 19.1438C18.7605 19.7023 18.4066 20.1609 17.9042 20.4446L17.9017 20.446L16.1751 21.4341C15.8657 21.6044 15.5395 21.69 15.21 21.69C15.05 21.69 14.8823 21.6674 14.7042 21.6256C14.2097 21.4879 13.8 21.1781 13.5387 20.7427L13.4207 20.546C13.0899 19.9758 12.6081 19.535 11.995 19.535C11.3806 19.535 10.898 19.9777 10.5672 20.5496L10.4592 20.7361C10.4589 20.7366 10.4586 20.7371 10.4583 20.7376C10.1931 21.1868 9.7813 21.5004 9.29506 21.6258ZM13.8567 20.2895L13.8573 20.2905L13.9659 20.4781C13.9661 20.4785 13.9664 20.479 13.9667 20.4794C14.1561 20.81 14.4704 21.043 14.8387 21.1351C15.1931 21.2236 15.5696 21.1838 15.8933 20.9911L17.6199 19.9931C17.9901 19.7795 18.2775 19.4225 18.3931 18.9888C18.5063 18.5644 18.451 18.1178 18.2331 17.7401L18.2322 17.7386C17.7242 16.8652 17.7069 16.0506 18.0341 15.478C18.3586 14.9102 19.0688 14.52 20.09 14.52C21.0061 14.52 21.74 13.7861 21.74 12.87V11.11C21.74 10.2067 21.009 9.45998 20.09 9.45998C19.0688 9.45998 18.3586 9.0698 18.0341 8.50191C17.7069 7.92934 17.7242 7.11476 18.2322 6.24137L18.2331 6.23984C18.451 5.86217 18.5063 5.41559 18.3931 4.99115C18.2776 4.55813 18.0025 4.21595 17.642 3.99415L17.6353 3.98997L17.6283 3.98601L15.903 2.99868C15.2278 2.59474 14.3551 2.83617 13.9595 3.50562L13.9595 3.50561L13.9573 3.50946L13.8473 3.69946L13.8467 3.7005C13.3372 4.58533 12.6503 4.99998 11.99 4.99998C11.3308 4.99998 10.6449 4.58662 10.1357 3.70461L10.0281 3.50902L10.024 3.50156L10.0196 3.49424C9.6304 2.84031 8.76766 2.60925 8.09931 2.99737C8.0991 2.99749 8.0989 2.99761 8.09869 2.99773L6.37014 3.99689C6.37005 3.99694 6.36995 3.99699 6.36986 3.99705C6.36983 3.99706 6.36981 3.99708 6.36978 3.9971C5.99973 4.21071 5.7125 4.56758 5.59688 5.00115C5.4837 5.42559 5.53902 5.87217 5.7569 6.24984L5.75779 6.25137C6.26579 7.12476 6.28306 7.93934 5.95588 8.51191C5.63137 9.0798 4.9212 9.46998 3.9 9.46998C2.98386 9.46998 2.25 10.2038 2.25 11.12V12.88C2.25 13.7833 2.98103 14.53 3.9 14.53C4.9212 14.53 5.63137 14.9202 5.95588 15.4881C6.28306 16.0606 6.26579 16.8752 5.75779 17.7486L5.75691 17.7501C5.53902 18.1278 5.4837 18.5744 5.59688 18.9988C5.71235 19.4318 5.98753 19.774 6.34795 19.9958L6.35474 20L6.36166 20.0039L8.08504 20.9902C8.41615 21.1919 8.80356 21.2351 9.15373 21.1444C9.53454 21.0485 9.836 20.7987 10.0251 20.4932L10.029 20.4869L10.0327 20.4805L10.1422 20.2914C10.1423 20.2912 10.1424 20.2911 10.1424 20.291C10.6537 19.4122 11.3419 18.99 12 18.99C12.6603 18.99 13.3472 19.4046 13.8567 20.2895Z"
+                                stroke="white" />
+                        </svg>
+                        <p>Vote Management</p>
+                    </div>
+                </a>
                 <?php
             }
             ?>
@@ -339,91 +392,109 @@ if ($conn->connect_error) {
 
         </div>
         <div style="width: 100%;">
-            <div style="background: white; margin: 20px 40px; padding: 20px;">
-
+            <div style="margin: 60px 40px">
                 <div style="display: flex; justify-content: space-between;">
-                    <p style="font-size: 18px; font-weight: 500; color: black;">Company Management</p>
-                    <a href="./create.php?admin"> <button class="submit-btn">Create</button> </a>
-                </div>
-
-                <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
-                    <input placeholder="Search" class="search" />
-                    <div class="filter">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z"
-                                stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875"
-                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Filter</p>
+                    <div>
+                        <p style="color: #81848F; font-size: 12px; margin: 0 0 5px;">Pages <span
+                                style="color: #242428;">/ Company</span></p>
+                        <p style="color: #2D3748; font-size: 14px; margin: 0;">Company Management</p>
                     </div>
-                    <div class="filter">
-                        <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3"
-                                stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Export Table</p>
+                    <div
+                        style="border-radius: 50%; width: 30px; height: 30px; background: white; display: flex; align-items: center; justify-content: center;">
+                        <p class="font-size: 20px; font-weight: 600;">
+                            <?php echo strtoupper($_SESSION['name'][0]) . "" . strtoupper($_SESSION['last_name'][0]); ?>
+                        </p>
+
                     </div>
                 </div>
-                <table class="table" style="width: 100%;">
-                    <thead>
-                        <tr style="background: #F5F5F6;">
-                            <th scope="col" style="text-align: left">S/N</th>
-                            <th scope="col" style="text-align: left">Company Name</th>
-                            <th scope="col" style="text-align: left">Phone</th>
-                            <th scope="col" style="text-align: left">Address</th>
-                            <th scope="col" style="text-align: left">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($templateData['result'] as $option): ?>
-                            <tr>
-                                <td><?php echo $option["id"]; ?></td>
-                                <td><?php echo $option["name"]; ?></td>
-                                <td><?php echo $option["phone"]; ?></td>
-                                <td><?php echo $option["address"]; ?></td>
-                                <td>
+            </div>
+            <div style="width: 100%;">
+                <div style="background: white; margin: 20px 40px; padding: 20px;">
 
-                                    <div style="display: flex; gap: 20px;">
-                                        <a href="update.php?update=<?php echo $option['id'] ?>">
-                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z"
-                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2"
-                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5"
-                                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                        </a>
-                                        <a href="index.php?delete=<?php echo $option['id']; ?>">
-                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
-                                                    stroke="#F15950" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                            </svg>
-                                        </a>
-                                       
-                                    </div>
-                                </td>
+                    <div style="display: flex; justify-content: space-between;">
+                        <p style="font-size: 18px; font-weight: 500; color: black;">Company Management</p>
+                        <a href="./create.php?admin"> <button class="submit-btn">Create</button> </a>
+                    </div>
+
+                    <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
+                        <div class="search-container">
+                            <form id="searchCompanyName" method="post" action="">
+                                <input placeholder="Search Company Name" class="search", name="searchName" />
+                                <button type="submit" , name="search" , value="search">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="9.80541" cy="9.80589" r="7.49047" stroke="#BDBDBD"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M15.0151 15.4043L17.9518 18.3334" stroke="#BDBDBD" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+
+                                </button>
+                            </form>
+                        </div>
+                        <a href="../company/">
+                            <div class="filter">
+                                <p>Clear</p>
+                            </div>
+                        </a>
+                    </div>
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr style="background: #F5F5F6;">
+                                <th scope="col" style="text-align: left">ID</th>
+                                <th scope="col" style="text-align: left">Company Name</th>
+                                <th scope="col" style="text-align: left">Phone</th>
+                                <th scope="col" style="text-align: left">Address</th>
+                                <th scope="col" style="text-align: left">Action</th>
                             </tr>
-                        <?php endforeach; ?>
-                        <tr>
-                        </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($templateData['result'] as $option): ?>
+                                <tr>
+                                    <td><?php echo $option["id"]; ?></td>
+                                    <td><?php echo $option["name"]; ?></td>
+                                    <td><?php echo $option["phone"]; ?></td>
+                                    <td><?php echo $option["address"]; ?></td>
+                                    <td>
 
-                    </tbody>
-                </table>
+                                        <div style="display: flex; gap: 20px;">
+                                            <a href="update.php?update=<?php echo $option['id'] ?>">
+                                                <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z"
+                                                        stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2"
+                                                        stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                    <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5"
+                                                        stroke-miterlimit="10" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+                                            </a>
+                                            <a href="index.php?delete=<?php echo $option['id']; ?>">
+                                                <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
+                                                        stroke="#F15950" stroke-width="2" stroke-linecap="round"
+                                                        stroke-linejoin="round" />
+                                                </svg>
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <tr>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
 
 </body>
 

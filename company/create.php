@@ -1,4 +1,6 @@
-<?php session_start();
+<?php 
+ob_start();
+session_start();
 
 $servername = "localhost";
 $username = "root";
@@ -109,7 +111,7 @@ $templateData = array(
     }
 
     input[type="text"],
-    input[type="password"] {
+    input[type="password"], select {
       width: 100%;
       padding: 10px 20px;
       margin: 5px 0 10px 0;
@@ -316,9 +318,7 @@ $templateData = array(
         <label for="password">Password</label>
         <input type="password" placeholder="Enter your password" id="password" name="password" required>
       </div>
-      <?php
-      if ($fromAdmin) {
-        ?>
+     
         <div class="form-group">
           <label for="product">Product</label>
 
@@ -327,15 +327,13 @@ $templateData = array(
 
             <?php foreach ($templateData['dropdownOptions'] as $option): ?>
               <option value="<?php echo $option["id"]; ?>" <?php if ($selected_value == $option["id"])
-                   echo 'selected'; ?>>
+                   echo 'selected'; ?>, required>
                 <?php echo $option["name"]; ?></option>
 
             <?php endforeach; ?>
           </select>
         </div>
-        <?php
-      }
-      ?>
+      
       <input type="submit" name="submit" value="<?php if ($fromAdmin) {
         echo "Create Company";
       } else {

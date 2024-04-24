@@ -28,7 +28,9 @@ if ($voteListResult->num_rows > 0) {
         $productSize = $row['size'];
         $productBenefits = $row['benefits'];
         $productPricingCategories = $row['pricing_categories'];
-        $voteValue = $voteListRow['vote'] =="FALSE"?"No":"Yes";
+        $voteValue = $voteListRow['vote'] == "FALSE" ? "No" : "Yes";
+        $createdAt = $voteListRow['created_at'];
+        $updatedAt = $voteListRow['updated_at'];
         $votedBy = $userRow["first_name"] . " " . $userRow["last_name"];
         $myMap = [
             "id" => $productId,
@@ -40,6 +42,8 @@ if ($voteListResult->num_rows > 0) {
             "pricing_categories" => $productPricingCategories,
             "vote" => $voteValue,
             "votedBy" => $votedBy,
+            "created_at"=> $createdAt,
+            "updated_at"=> $updatedAt
 
         ];
         $productListData[] = $myMap;
@@ -67,7 +71,7 @@ if ($conn->connect_error) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Vote</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -103,6 +107,7 @@ if ($conn->connect_error) {
             display: flex;
             gap: 10px;
             background: white;
+            height: 100vh;
         }
 
         .sidebar-item {
@@ -121,6 +126,10 @@ if ($conn->connect_error) {
             font-weight: 500;
             margin: 0;
             text-decoration: none;
+        }
+
+        .active-sidebar {
+            background: #8FC6AA;
         }
 
         .dashboard-container {
@@ -195,7 +204,7 @@ if ($conn->connect_error) {
         }
     </style>
 </head>
-<?php include ("../include/header.php"); ?>
+<?php include ("../include/session.php"); ?>
 
 <body>
     <?php
@@ -317,7 +326,7 @@ if ($conn->connect_error) {
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
                 <a href="../vote/">
-                    <div class="sidebar-item">
+                    <div class="sidebar-item active-sidebar">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M12 15.75C9.93 15.75 8.25 14.07 8.25 12C8.25 9.93 9.93 8.25 12 8.25C14.07 8.25 15.75 9.93 15.75 12C15.75 14.07 14.07 15.75 12 15.75ZM12 9.75C10.76 9.75 9.75 10.76 9.75 12C9.75 13.24 10.76 14.25 12 14.25C13.24 14.25 14.25 13.24 14.25 12C14.25 10.76 13.24 9.75 12 9.75Z"
@@ -354,42 +363,39 @@ if ($conn->connect_error) {
 
         </div>
         <div style="width: 100%;">
+            <div style="margin: 60px 40px">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <p style="color: #81848F; font-size: 12px; margin: 0 0 5px;">Pages <span
+                                style="color: #242428;">/ Vote</span></p>
+                        <p style="color: #2D3748; font-size: 14px; margin: 0;">Vote Management</p>
+                    </div>
+                    <div
+                        style="border-radius: 50%; width: 30px; height: 30px; background: white; display: flex; align-items: center; justify-content: center;">
+                        <p class="font-size: 20px; font-weight: 600;">
+                            <?php echo strtoupper($_SESSION['name'][0]) . "" . strtoupper($_SESSION['last_name'][0]); ?>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
             <div style="background: white; margin: 20px 40px; padding: 20px;">
 
                 <div style="display: flex; justify-content: space-between;">
                     <p style="font-size: 18px; font-weight: 500; color: black;">Vote Management</p>
-                   
+
                 </div>
 
-                <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
-                    <input placeholder="Search" class="search" />
-                    <div class="filter">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z"
-                                stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875"
-                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Filter</p>
-                    </div>
-                    <div class="filter">
-                        <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3"
-                                stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Export Table</p>
-                    </div>
-                </div>
+                
                 <table class="table" style="width: 100%;">
                     <thead>
                         <tr style="background: #F5F5F6;">
-                            <th scope="col" style="text-align: left">S/N</th>
+                            <th scope="col" style="text-align: left">ID</th>
                             <th scope="col" style="text-align: left">Product Name</th>
                             <th scope="col" style="text-align: left">Price</th>
                             <th scope="col" style="text-align: left">Voted By</th>
+                            <th scope="col" style="text-align: left">Created At</th>
+                            <th scope="col" style="text-align: left">Updated At</th>
                             <th scope="col" style="text-align: left">Vote</th>
                             <th scope="col" style="text-align: left">Action</th>
                         </tr>
@@ -401,29 +407,31 @@ if ($conn->connect_error) {
                                 <td><?php echo $option["name"]; ?></td>
                                 <td><?php echo "￡" . $option["price"]; ?></td>
                                 <td><?php echo $option["votedBy"]; ?></td>
+                                <td><?php echo $option["created_at"]; ?></td>
+                                <td><?php echo $option["updated_at"]; ?></td>
                                 <td><?php echo $option["vote"]; ?></td>
                                 <td>
-                                    
-                                        <a href="index.php?delete=<?php echo $option['id']; ?>">
-                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
-                                                    stroke="#F15950" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <tr>
-                        </tr>
 
-                    </tbody>
-                </table>
-            </div>
+                                    <a href="index.php?delete=<?php echo $option['id']; ?>">
+                                        <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
+                                                stroke="#F15950" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </a>
+                </div>
+                </td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+            </tr>
+
+            </tbody>
+            </table>
         </div>
+    </div>
     </div>
 
 

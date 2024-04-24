@@ -1,4 +1,6 @@
-<?php session_start();
+<?php 
+ob_start();
+session_start();
 
 $servername = "localhost";
 $username = "root";
@@ -87,7 +89,7 @@ if ($conn->connect_error) {
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],   input[type="number"],select, textarea {
             width: 100%;
             padding: 10px 20px;
             margin: 5px 0 10px 0;
@@ -152,7 +154,9 @@ if ($conn->connect_error) {
             /* Placeholder text color */
             font-size: 16px;
             font-weight: 400;
-        }.sign_in {
+        }
+
+        .sign_in {
             color: #245843;
             font-weight: bold;
             text-decoration: none;
@@ -207,26 +211,26 @@ if ($conn->connect_error) {
 
             if ($result == true) {
                 header("Location: ./index.php");
-             
+
             } else {
-               
-          ?>
-          <script>
-            Swal.fire({
-              position: "top-end",
-              icon: "error",
-              title: "something went wrong",
-              showConfirmButton: false,
-              timer: 1500,
-              heightAuto: false,
-              iconColor: "red",
-            });
-          </script>
-          <?php
+
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "something went wrong",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        heightAuto: false,
+                        iconColor: "red",
+                    });
+                </script>
+                <?php
             }
         }
-        
-    } 
+
+    }
 
     ?>
 
@@ -277,8 +281,8 @@ if ($conn->connect_error) {
             </div>
             <input type="submit" name="submit" value="Create Product">
             <p class="signup">
-          <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
-        </p>
+                <span><?php echo '<a href="index.php"class="sign_in" >Back</a>' ?></span>
+            </p>
         </form>
     </div>
 

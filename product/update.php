@@ -87,7 +87,7 @@ if ($conn->connect_error) {
         }
 
         input[type="text"],
-        input[type="password"] {
+        input[type="password"],input[type="number"],select, textarea  {
             width: 100%;
             padding: 10px 20px;
             margin: 5px 0 10px 0;

@@ -1,4 +1,6 @@
-<?php session_start();
+<?php
+ob_start();
+ session_start();
 
 $servername = "localhost";
 $username = "root";
@@ -159,7 +161,7 @@ if ($conn->connect_error) {
         }
   </style>
 </head>
-<?php include ("./include/session.php"); ?>
+<?php include ("../include/session.php"); ?>
 
 <body>
 <?php

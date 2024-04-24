@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 $servername = "localhost";
 $username = "root";
@@ -11,56 +12,114 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 $productListData = [];
 $user_id = $_SESSION['id'];
 $searchName = $_POST['searchName'];
-if (isset($searchName)) {
-    $productListQuery = "SELECT * FROM product WHERE name ='$searchName'";
+if (isset($searchName) && strlen($searchName) > 0 && isset($_POST['search'])) {
+    $productListQuery = "SELECT * FROM product WHERE name LIKE '%$searchName%'";
     $productListResult = $conn->query($productListQuery);
-    header("Location: index.php");
-    exit;
+} else if (isset($_POST['filter'])) {
+
+    $minPrice = $_POST['minAmount'];
+    $maxPrice = $_POST['maxAmount'];
+    $size = $_POST['size'];
+    $pricingCategories = $_POST['pricing'];
+    $whereClause = ""; // Initialize empty where clause
+
+    // Build conditions based on provided filters
+    if (!empty($searchName)) {
+        $whereClause .= "name LIKE '%$searchName%'";
+    }
+
+    if (isset($minPrice) && $minPrice !== "") {
+        if (!empty($whereClause)) {
+            $whereClause .= " AND ";
+        }
+        $whereClause .= " price >= $minPrice ";
+    }
+
+    if (isset($maxPrice) && $maxPrice !== "") {
+        if (!empty($whereClause)) {
+            $whereClause .= " AND ";
+        }
+        $whereClause .= " price <= $maxPrice ";
+    }
+
+    if (!empty($size)) {
+        if (!empty($whereClause)) {
+            $whereClause .= " AND ";
+        }
+        $whereClause .= " size = '$size' ";
+    }
+
+    if (!empty($pricingCategories)) {
+        if (!empty($whereClause)) {
+            $whereClause .= " AND ";
+        }
+        // Handle multiple pricing categories (explode the string into an array)
+        $categoryList = explode(",", $pricingCategories);
+        $categoryClause = "";
+        foreach ($categoryList as $category) {
+            $trimmedCategory = trim($category); // Remove potential leading/trailing spaces
+            if (!empty($categoryClause)) {
+                $categoryClause .= " OR ";
+            }
+            $categoryClause .= " pricing_categories = '$trimmedCategory' ";
+        }
+        $whereClause .= " ($categoryClause) ";
+    }
+
+    // Construct the final query (replace "your_table" with your actual table name)
+    $query = "SELECT * FROM product";
+    if (!empty($whereClause)) {
+        $query .= " WHERE $whereClause ";
+    }
+
+    $productListQuery = $query;
+    $productListResult = $conn->query($productListQuery);
+
 } else {
     $productListQuery = "SELECT * FROM `product`";
     $productListResult = $conn->query($productListQuery);
 }
-    if ($productListResult->num_rows > 0) {
-        while ($row = $productListResult->fetch_assoc()) {
-            $productId = $row['id'];
-            $productName = $row['name'];
-            $productPrice = $row['price'];
-            $productDescription = $row['description'];
-            $productSize = $row['size'];
-            $voteCount = $row['vote_count'];
-            $productBenefits = $row['benefits'];
-            $productPricingCategories = $row['pricing_categories'];
-            $voteValue = "FALSE";
-            $check_vote_query = "SELECT * FROM votes WHERE product = $productId AND user = $user_id";
-            $check_vote_result = $conn->query($check_vote_query);
-            if ($check_vote_result->num_rows > 0) {
+if ($productListResult->num_rows > 0) {
+    while ($row = $productListResult->fetch_assoc()) {
+        $productId = $row['id'];
+        $productName = $row['name'];
+        $productPrice = $row['price'];
+        $productDescription = $row['description'];
+        $productSize = $row['size'];
+        $voteCount = $row['vote_count'];
+        $productBenefits = $row['benefits'];
+        $productPricingCategories = $row['pricing_categories'];
+        $voteValue = "FALSE";
+        $check_vote_query = "SELECT * FROM votes WHERE product = $productId AND user = $user_id";
+        $check_vote_result = $conn->query($check_vote_query);
+        if ($check_vote_result->num_rows > 0) {
 
-                if ($check_vote_result == true) {
-                    if (mysqli_num_rows($check_vote_result) > 0) {
+            if ($check_vote_result == true) {
+                if (mysqli_num_rows($check_vote_result) > 0) {
 
-                        $voteValue = mysqli_fetch_assoc($check_vote_result)["vote"];
-                    }
+                    $voteValue = mysqli_fetch_assoc($check_vote_result)["vote"];
                 }
             }
-
-            $myMap = [
-                "id" => $productId,
-                "name" => $productName,
-                "price" => $productPrice,
-                "description" => $productDescription,
-                "size" => $productSize,
-                "benefits" => $productBenefits,
-                "vote" => $voteValue,
-                "pricing_categories" => $productPricingCategories,
-                "vote_count" => $voteCount,
-
-            ];
-            $productListData[] = $myMap;
-            // Perform operations with resident data as needed
         }
-    } else {
-        // Handle case where no residents are found
+
+        $myMap = [
+            "id" => $productId,
+            "name" => $productName,
+            "price" => $productPrice,
+            "description" => $productDescription,
+            "size" => $productSize,
+            "benefits" => $productBenefits,
+            "vote" => $voteValue,
+            "pricing_categories" => $productPricingCategories,
+            "vote_count" => $voteCount,
+
+        ];
+        $productListData[] = $myMap;
+        // Perform operations with resident data as needed
     }
+} else {
+    // Handle case where no residents are found
+}
 
 $templateData = array(
     "result" => $productListData,
@@ -71,7 +130,6 @@ $templateData = array(
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-// echo "Connected successfully";
 
 ?>
 
@@ -81,7 +139,7 @@ if ($conn->connect_error) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Product</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -117,6 +175,7 @@ if ($conn->connect_error) {
             display: flex;
             gap: 10px;
             background: white;
+            height: 100vh;
         }
 
         .sidebar-item {
@@ -127,6 +186,10 @@ if ($conn->connect_error) {
             gap: 10px;
             background: #214C3B;
             text-decoration: none;
+        }
+
+        .active-sidebar {
+            background: #8FC6AA;
         }
 
         .sidebar-item p {
@@ -176,8 +239,32 @@ if ($conn->connect_error) {
             padding: 10px;
         }
 
-        .search {
-            width: 270px;
+        input[type="number"] {
+            width: 100px;
+            padding: 10px 10px;
+            margin: 5px 0 10px 0;
+            display: inline-block;
+            border: 1px solid #E0E0E0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: transparent;
+            color: #fff;
+            /* padding: 10px 20px; */
+            border: none;
+            /* border-radius: 5px;
+            cursor: pointer; */
+
+        }
+
+        .search,
+        select {
+            width: 200px;
             padding: 10px 20px;
             display: inline-block;
             border: 1px solid #5E606A29;
@@ -185,7 +272,7 @@ if ($conn->connect_error) {
             box-sizing: border-box;
             background: transparent;
             outline: none;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .filter {
@@ -207,9 +294,51 @@ if ($conn->connect_error) {
         a {
             text-decoration: none;
         }
+
+        .search-container {
+            position: relative;
+            /* Allow absolute positioning of child elements */
+            display: inline-block;
+            /* Maintain inline behavior for the container */
+        }
+
+        .search-container input[type="text"] {
+            padding-right: 30px;
+            /* Make space for the button */
+            border: 1px solid #ccc;
+            /* Style the input field */
+        }
+
+        .search-container button {
+            position: absolute;
+            /* Position the button absolutely within the container */
+            top: 50%;
+            /* Vertical centering */
+            right: 10px;
+            /* Horizontal positioning from the right edge */
+            transform: translateY(-50%);
+            /* Adjust vertical centering if needed */
+            background-color: transparent;
+            /* Transparent background for a cleaner look */
+            border: none;
+            /* Remove button borders */
+            cursor: pointer;
+            /* Indicate clickable behavior */
+        }
+
+        .search-container button i {
+            /* Style the search icon (replace with your icon class) */
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        .search-container button:hover {
+            /* Button hover effect (optional) */
+            color: #333;
+        }
     </style>
 </head>
-<?php include ("../include/header.php"); ?>
+<?php include ("../include/session.php"); ?>
 
 <body>
     <?php
@@ -222,46 +351,40 @@ if ($conn->connect_error) {
 
     if (isset($_GET['vote'])) {
         $string = $_GET['vote'];
-        echo $string;
         $array = explode(",", $string);
         $product_id = $array[0];
         $vote_value = $array[1] == "yes" ? "TRUE" : "FALSE";
-        echo $array[1];
         $user_id = $_SESSION['id'];
         $check_vote_query = "SELECT * FROM votes WHERE product = $product_id AND user = $user_id";
-        echo $check_vote_query;
         $check_vote_result = $conn->query($check_vote_query);
-        echo $vote_value;
+        $currentDate = date('Y-m-d');
         if ($check_vote_result == true) {
-            echo " -1";
             if (mysqli_num_rows($check_vote_result) > 0) {
                 // User has already voted, update their vote
-                echo " -2";
-                $update_vote_query = "UPDATE votes SET vote = '$vote_value' WHERE product = $product_id AND user = $user_id";
+                $update_vote_query = "UPDATE votes SET updated_at ='$currentDate', vote = '$vote_value' WHERE product = $product_id AND user = $user_id";
+
                 mysqli_query($conn, $update_vote_query);
-                echo " -3";
             } else {
                 // User hasn't voted yet, insert new vote
-                echo " -4";
                 $insert_vote_query = "INSERT INTO votes (user, product, vote) VALUES ($user_id, $product_id, '$vote_value')";
                 mysqli_query($conn, $insert_vote_query);
-                echo " -5";
             }
             // Update vote count for the product
-            echo " 1";
+    
             if ($vote_value === 'TRUE') {
-                echo " 2";
+
                 $update_count_query = "UPDATE product SET vote_count = vote_count + 1 WHERE id = $product_id";
-                echo " 3";
+
             } else {
-                echo " 4";
+
                 $update_count_query = "UPDATE product SET vote_count = vote_count - 1 WHERE id = $product_id";
-                echo " 5";
+
             }
-            echo " 6";
+
             $result = mysqli_query($conn, $update_count_query);
-            echo " 7";
+
             if ($result == true) {
+
                 header("Location: index.php");
                 exit;
             }
@@ -331,12 +454,9 @@ if ($conn->connect_error) {
                 <?php
             }
             ?>
-            <?php
 
-            if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
-                ?>
-
-                <div class="sidebar-item">
+            <a href="../product/">
+                <div class="sidebar-item active-sidebar">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M12 21.65C11.69 21.65 11.39 21.61 11.14 21.52C7.32 20.21 1.25 15.56 1.25 8.68998C1.25 5.18998 4.08 2.34998 7.56 2.34998C9.25 2.34998 10.83 3.00998 12 4.18998C13.17 3.00998 14.75 2.34998 16.44 2.34998C19.92 2.34998 22.75 5.19998 22.75 8.68998C22.75 15.57 16.68 20.21 12.86 21.52C12.61 21.61 12.31 21.65 12 21.65ZM7.56 3.84998C4.91 3.84998 2.75 6.01998 2.75 8.68998C2.75 15.52 9.32 19.32 11.63 20.11C11.81 20.17 12.2 20.17 12.38 20.11C14.68 19.32 21.26 15.53 21.26 8.68998C21.26 6.01998 19.1 3.84998 16.45 3.84998C14.93 3.84998 13.52 4.55998 12.61 5.78998C12.33 6.16998 11.69 6.16998 11.41 5.78998C10.48 4.54998 9.08 3.84998 7.56 3.84998Z"
@@ -344,13 +464,11 @@ if ($conn->connect_error) {
                     </svg>
                     <p>Product Management</p>
                 </div>
+            </a>
 
-                <?php
-            }
-            ?>
             <?php
 
-            if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
+            if ( $_SESSION['role'] === 'admin' ||$_SESSION['role'] === 'council' ) {
                 ?>
                 <a href="../area/">
                     <div class="sidebar-item">
@@ -417,48 +535,98 @@ if ($conn->connect_error) {
 
         </div>
         <div style="width: 100%;">
+            <div style="margin: 60px 40px">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <p style="color: #81848F; font-size: 12px; margin: 0 0 5px;">Pages <span
+                                style="color: #242428;">/ Product</span></p>
+                        <p style="color: #2D3748; font-size: 14px; margin: 0;">Product Management</p>
+                    </div>
+                    <div
+                        style="border-radius: 50%; width: 30px; height: 30px; background: white; display: flex; align-items: center; justify-content: center;">
+                        <p class="font-size: 20px; font-weight: 600;">
+                            <?php echo strtoupper($_SESSION['name'][0]) . "" . strtoupper($_SESSION['last_name'][0]); ?>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
             <div style="background: white; margin: 20px 40px; padding: 20px;">
 
                 <div style="display: flex; justify-content: space-between;">
                     <p style="font-size: 18px; font-weight: 500; color: black;">Product Management</p>
-                    <a href="./create.php"> <button class="submit-btn">Create</button></a>
+                    <?php
+                    if ($_SESSION['role'] === 'admin') {
+                        ?> <a href="./create.php"> <button class="submit-btn">Create</button></a> <?php
+                    }
+                    ?>
                 </div>
 
                 <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
-                    <input placeholder="Search" class="search" name="searchName"/>
-                    <button type="submit">search</button>
-                    <div class="filter">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z"
-                                stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875"
-                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Filter</p>
-                    </div>
-                    <div class="filter">
-                        <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3"
-                                stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Export Table</p>
-                    </div>
+                    <form id="searchProductName" method="post" action="">
+                        <div class="search-container">
+                            <input placeholder="Search product name" class="search" name="searchName" />
+                            <button type="submit" , name="search" , value="search">
+
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="9.80541" cy="9.80589" r="7.49047" stroke="#BDBDBD" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M15.0151 15.4043L17.9518 18.3334" stroke="#BDBDBD" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+
+                            </button>
+                        </div>
+                        <input type="number" id="minAmount" name="minAmount" step="1" min="0" placeholder="Min Price">
+                        <input type="number" id="maxAmount" name="maxAmount" step="1" min="0" placeholder="Max Price">
+
+                        <select id="pricing" name="pricing">
+                            <option value="">Select pricing</option>
+                            <option value="Affordable">Affordable</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="Premium">Premium</option>
+                        </select>
+                        <select id="size" name="size">
+                            <option value="">Select size</option>
+                            <option value="Small">Small</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Large">Large</option>
+                        </select>
+                        <button type="submit" , name="filter" ,value="filter">
+                            <div class="filter">
+                                <p>Filter</p>
+                            </div>
+                        </button>
+                    </form>
+                    <a href="../product/">
+                        <div class="filter">
+                            <p>Clear</p>
+                        </div>
+                    </a>
                 </div>
                 <table class="table" style="width: 100%;">
                     <thead>
                         <tr style="background: #F5F5F6;">
-                            <th scope="col" style="text-align: left">S/N</th>
+                            <th scope="col" style="text-align: left">ID</th>
                             <th scope="col" style="text-align: left">Name</th>
                             <th scope="col" style="text-align: left">Price</th>
                             <th scope="col" style="text-align: left">Description</th>
                             <th scope="col" style="text-align: left">Size</th>
                             <th scope="col" style="text-align: left">Benefits</th>
                             <th scope="col" style="text-align: left">Pricing Categories</th>
-                            <th scope="col" style="text-align: left">Vote Count</th>
-                            <th scope="col" style="text-align: left">Action</th>
+                            <?php
+                            if ($_SESSION['role'] !== 'resident') {
+                                ?>
+                                <th scope="col" style="text-align: left">Vote Count</th> <?php
+                            }
+                            ?>
+                            <?php
+                            if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'resident') {
+                                ?>
+                                <th scope="col" style="text-align: left">Action</th> <?php
+                            }
+                            ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -471,62 +639,86 @@ if ($conn->connect_error) {
                                 <td><?php echo $option["size"]; ?></td>
                                 <td><?php echo $option["benefits"]; ?></td>
                                 <td><?php echo $option["pricing_categories"]; ?></td>
-                                <td><?php echo $option["vote_count"]; ?></td>
-                                <td>
-                                    <div style="display: flex; gap: 20px;">
-                                        <a href="update.php?update=<?php echo $option['id']; ?>">
-                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z"
-                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2"
-                                                    stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
-                                                    stroke-linecap="round" stroke-linejoin="round" />
-                                                <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5"
-                                                    stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                                            </svg>
-                                        </a>
-
-                                        <?php
-                                        if ($option['vote'] === "TRUE") {
-                                            ?>
-                                            <a href="index.php?vote=<?php echo $option['id']; ?>,no">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M13.7 2.58301C12.1917 2.58301 10.8417 3.31634 10 4.44134C9.15835 3.31634 7.80835 2.58301 6.30002 2.58301C3.74169 2.58301 1.66669 4.66634 1.66669 7.24134C1.66669 8.23301 1.82502 9.14967 2.10002 9.99967C3.41669 14.1663 7.47502 16.658 9.48335 17.3413C9.76669 17.4413 10.2334 17.4413 10.5167 17.3413C12.525 16.658 16.5834 14.1663 17.9 9.99967C18.175 9.14967 18.3334 8.23301 18.3334 7.24134C18.3334 4.66634 16.2584 2.58301 13.7 2.58301Z"
-                                                        fill="#A5272F" />
-                                                </svg>
-                                            </a>
+                                <?php
+                                if ($_SESSION['role'] !== 'resident') {
+                                    ?>
+                                    <td><?php echo $option["vote_count"]; ?></td> <?php
+                                }
+                                ?>
+                                <?php
+                                if ($_SESSION['role'] === 'admin' || $_SESSION['role'] === 'resident') {
+                                    ?>
+                                    <td>
+                                        <div style="display: flex; gap: 20px;">
                                             <?php
-                                        } else {
+                                            if ($_SESSION['role'] === 'admin') {
+                                                ?>
+                                                <a href="update.php?update=<?php echo $option['id']; ?>">
+                                                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M13.7601 3.59997L5.5501 12.29C5.2401 12.62 4.9401 13.27 4.8801 13.72L4.5101 16.96C4.3801 18.13 5.2201 18.93 6.3801 18.73L9.6001 18.18C10.0501 18.1 10.6801 17.77 10.9901 17.43L19.2001 8.73997C20.6201 7.23997 21.2601 5.52997 19.0501 3.43997C16.8501 1.36997 15.1801 2.09997 13.7601 3.59997Z"
+                                                            stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path d="M12.3899 5.04999C12.8199 7.80999 15.0599 9.91999 17.8399 10.2"
+                                                            stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"
+                                                            stroke-linecap="round" stroke-linejoin="round" />
+                                                        <path d="M3.5 22H21.5" stroke="#292D32" stroke-width="1.5"
+                                                            stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+                                                    </svg>
+                                                </a>
+
+                                                <?php
+                                            }
                                             ?>
-                                            <a href="index.php?vote=<?php echo $option['id']; ?>,yes">
-                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M12 21.65C11.69 21.65 11.39 21.61 11.14 21.52C7.32 20.21 1.25 15.56 1.25 8.68998C1.25 5.18998 4.08 2.34998 7.56 2.34998C9.25 2.34998 10.83 3.00998 12 4.18998C13.17 3.00998 14.75 2.34998 16.44 2.34998C19.92 2.34998 22.75 5.19998 22.75 8.68998C22.75 15.57 16.68 20.21 12.86 21.52C12.61 21.61 12.31 21.65 12 21.65ZM7.56 3.84998C4.91 3.84998 2.75 6.01998 2.75 8.68998C2.75 15.52 9.32 19.32 11.63 20.11C11.81 20.17 12.2 20.17 12.38 20.11C14.68 19.32 21.26 15.53 21.26 8.68998C21.26 6.01998 19.1 3.84998 16.45 3.84998C14.93 3.84998 13.52 4.55998 12.61 5.78998C12.33 6.16998 11.69 6.16998 11.41 5.78998C10.48 4.54998 9.08 3.84998 7.56 3.84998Z"
-                                                        fill="#D9D9D9" />
-                                                </svg>
-                                            </a>
                                             <?php
-                                        }
-                                        ?>
+                                            if ($_SESSION['role'] === 'resident') {
+                                                if ($option['vote'] === "TRUE") {
+                                                    ?>
+                                                    <a href="index.php?vote=<?php echo $option['id']; ?>,no">
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path
+                                                                d="M13.7 2.58301C12.1917 2.58301 10.8417 3.31634 10 4.44134C9.15835 3.31634 7.80835 2.58301 6.30002 2.58301C3.74169 2.58301 1.66669 4.66634 1.66669 7.24134C1.66669 8.23301 1.82502 9.14967 2.10002 9.99967C3.41669 14.1663 7.47502 16.658 9.48335 17.3413C9.76669 17.4413 10.2334 17.4413 10.5167 17.3413C12.525 16.658 16.5834 14.1663 17.9 9.99967C18.175 9.14967 18.3334 8.23301 18.3334 7.24134C18.3334 4.66634 16.2584 2.58301 13.7 2.58301Z"
+                                                                fill="#A5272F" />
+                                                        </svg>
+                                                    </a>
+                                                    <?php
+                                                } else {
+                                                    ?>
+                                                    <a href="index.php?vote=<?php echo $option['id']; ?>,yes">
+                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path
+                                                                d="M12 21.65C11.69 21.65 11.39 21.61 11.14 21.52C7.32 20.21 1.25 15.56 1.25 8.68998C1.25 5.18998 4.08 2.34998 7.56 2.34998C9.25 2.34998 10.83 3.00998 12 4.18998C13.17 3.00998 14.75 2.34998 16.44 2.34998C19.92 2.34998 22.75 5.19998 22.75 8.68998C22.75 15.57 16.68 20.21 12.86 21.52C12.61 21.61 12.31 21.65 12 21.65ZM7.56 3.84998C4.91 3.84998 2.75 6.01998 2.75 8.68998C2.75 15.52 9.32 19.32 11.63 20.11C11.81 20.17 12.2 20.17 12.38 20.11C14.68 19.32 21.26 15.53 21.26 8.68998C21.26 6.01998 19.1 3.84998 16.45 3.84998C14.93 3.84998 13.52 4.55998 12.61 5.78998C12.33 6.16998 11.69 6.16998 11.41 5.78998C10.48 4.54998 9.08 3.84998 7.56 3.84998Z"
+                                                                fill="#D9D9D9" />
+                                                        </svg>
+                                                    </a>
+                                                    <?php
+                                                }
+                                            }
+                                            ?>
+                                            <?php
+                                            if ($_SESSION['role'] === 'admin') {
+                                                ?>
 
-
-                                        <a href="index.php?delete=<?php echo $option['id']; ?>">
-                                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
-                                                    stroke="#F15950" stroke-width="2" stroke-linecap="round"
-                                                    stroke-linejoin="round" />
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </td>
+                                                <a href="index.php?delete=<?php echo $option['id']; ?>">
+                                                    <svg width="25" height="24" viewBox="0 0 25 24" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M19.5 7L18.6327 19.1425C18.5579 20.1891 17.687 21 16.6378 21H8.36224C7.31296 21 6.44208 20.1891 6.36732 19.1425L5.5 7M10.5 11V17M14.5 11V17M15.5 7V4C15.5 3.44772 15.0523 3 14.5 3H10.5C9.94772 3 9.5 3.44772 9.5 4V7M4.5 7H20.5"
+                                                            stroke="#F15950" stroke-width="2" stroke-linecap="round"
+                                                            stroke-linejoin="round" />
+                                                    </svg>
+                                                </a>
+                                                <?php
+                                            }
+                                            ?>
+                                        </div>
+                                    </td>
+                                    <?php
+                                }
+                                ?>
                             </tr>
                         <?php endforeach; ?>
                         <tr>

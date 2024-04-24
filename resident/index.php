@@ -7,9 +7,16 @@ $dbname = "Green Alliance";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-$residentListQuery = "SELECT * FROM `resident`";
-$residentListResult = $conn->query($residentListQuery);
+
 $residentListData = [];
+$searchName = $_POST['searchName'];
+if (isset($searchName) && strlen($searchName) > 0 && isset($_POST['search'])) {
+    $residentListQuery = "SELECT * FROM resident WHERE first_name LIKE '%$searchName%' OR last_name LIKE '%$searchName%'";
+    $residentListResult = $conn->query($residentListQuery);
+} else {
+    $residentListQuery = "SELECT * FROM `resident`";
+    $residentListResult = $conn->query($residentListQuery);
+}
 if ($residentListResult->num_rows > 0) {
     while ($row = $residentListResult->fetch_assoc()) {
         $string1 = $row['first_name'];
@@ -19,6 +26,8 @@ if ($residentListResult->num_rows > 0) {
         $residentAgeGroup = $row['age_group'];
         $residentGender = $row['gender'];
         $resdientId = $row['id'];
+        $title = $row['title'];
+        $phone = $row['phone'];
         $sql = "SELECT * FROM `area` WHERE `id` = $residentAreaId";
         $result = $conn->query($sql);
 
@@ -37,6 +46,8 @@ if ($residentListResult->num_rows > 0) {
             "gender" => $residentGender,
             "age_group" => $residentAgeGroup,
             "address" => $residentAddress,
+            "title"=> $title,
+            "phone"=> $phone
 
         ];
         $residentListData[] = $myMap;
@@ -60,11 +71,11 @@ if ($conn->connect_error) {
 
 <!DOCTYPE html>
 <html lang="en">
-
+<?php include ("../include/session.php"); ?>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Resident</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -119,6 +130,10 @@ if ($conn->connect_error) {
             font-weight: 500;
             margin: 0;
             text-decoration: none;
+        }
+
+        .active-sidebar {
+            background: #8FC6AA;
         }
 
         .dashboard-container {
@@ -191,6 +206,48 @@ if ($conn->connect_error) {
         a {
             text-decoration: none;
         }
+
+        .search-container {
+            position: relative;
+            /* Allow absolute positioning of child elements */
+            display: inline-block;
+            /* Maintain inline behavior for the container */
+        }
+
+        .search-container input[type="text"] {
+            padding-right: 30px;
+            /* Make space for the button */
+            border: 1px solid #ccc;
+            /* Style the input field */
+        }
+
+        .search-container button {
+            position: absolute;
+            /* Position the button absolutely within the container */
+            top: 50%;
+            /* Vertical centering */
+            right: 10px;
+            /* Horizontal positioning from the right edge */
+            transform: translateY(-50%);
+            /* Adjust vertical centering if needed */
+            background-color: transparent;
+            /* Transparent background for a cleaner look */
+            border: none;
+            /* Remove button borders */
+            cursor: pointer;
+            /* Indicate clickable behavior */
+        }
+
+        .search-container button i {
+            /* Style the search icon (replace with your icon class) */
+            font-size: 18px;
+            color: #aaa;
+        }
+
+        .search-container button:hover {
+            /* Button hover effect (optional) */
+            color: #333;
+        }
     </style>
 </head>
 
@@ -252,7 +309,7 @@ if ($conn->connect_error) {
             if (isset($_SESSION['role']) && ($_SESSION['role'] === 'admin')) {
                 ?>
                 <a href="../resident">
-                    <div class="sidebar-item">
+                    <div class="sidebar-item active-sidebar">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path
                                 d="M14.25 19.5V15C14.25 14.8011 14.171 14.6103 14.0303 14.4697C13.8897 14.329 13.6989 14.25 13.5 14.25H10.5C10.3011 14.25 10.1103 14.329 9.96967 14.4697C9.82902 14.6103 9.75 14.8011 9.75 15V19.5C9.75 19.6989 9.67098 19.8897 9.53033 20.0303C9.38968 20.171 9.19891 20.25 9 20.25H4.5C4.30109 20.25 4.11032 20.171 3.96967 20.0303C3.82902 19.8897 3.75 19.6989 3.75 19.5V10.8281C3.75168 10.7243 3.77411 10.6219 3.81597 10.5269C3.85783 10.4319 3.91828 10.3463 3.99375 10.275L11.4937 3.45936C11.632 3.33287 11.8126 3.26273 12 3.26273C12.1874 3.26273 12.368 3.33287 12.5062 3.45936L20.0062 10.275C20.0817 10.3463 20.1422 10.4319 20.184 10.5269C20.2259 10.6219 20.2483 10.7243 20.25 10.8281V19.5C20.25 19.6989 20.171 19.8897 20.0303 20.0303C19.8897 20.171 19.6989 20.25 19.5 20.25H15C14.8011 20.25 14.6103 20.171 14.4697 20.0303C14.329 19.8897 14.25 19.6989 14.25 19.5Z"
@@ -351,6 +408,23 @@ if ($conn->connect_error) {
 
         </div>
         <div style="width: 100%;">
+
+            <div style="margin: 60px 40px">
+                <div style="display: flex; justify-content: space-between;">
+                    <div>
+                        <p style="color: #81848F; font-size: 12px; margin: 0 0 5px;">Pages <span
+                                style="color: #242428;">/ Resident</span></p>
+                        <p style="color: #2D3748; font-size: 14px; margin: 0;">Resident Management</p>
+                    </div>
+                    <div
+                        style="border-radius: 50%; width: 30px; height: 30px; background: white; display: flex; align-items: center; justify-content: center;">
+                        <p class="font-size: 20px; font-weight: 600;">
+                            <?php echo strtoupper($_SESSION['name'][0]) . "" . strtoupper($_SESSION['last_name'][0]); ?>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
             <div style="background: white; margin: 20px 40px; padding: 20px;">
 
                 <div style="display: flex; justify-content: space-between;">
@@ -359,33 +433,35 @@ if ($conn->connect_error) {
                 </div>
 
                 <div style="display:flex; gap: 15px; margin: 20px 0 30px;">
-                    <input placeholder="Search" class="search" />
-                    <div class="filter">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M4.49992 1.75H15.4999C16.4166 1.75 17.1666 2.5 17.1666 3.41667V5.25C17.1666 5.91667 16.7499 6.75 16.3333 7.16667L12.7499 10.3333C12.2499 10.75 11.9166 11.5833 11.9166 12.25V15.8333C11.9166 16.3333 11.5833 17 11.1666 17.25L9.99992 18C8.91659 18.6667 7.41658 17.9167 7.41658 16.5833V12.1667C7.41658 11.5833 7.08325 10.8333 6.74992 10.4167L3.58325 7.08333C3.16659 6.66667 2.83325 5.91667 2.83325 5.41667V3.5C2.83325 2.5 3.58325 1.75 4.49992 1.75Z"
-                                stroke="#666974" stroke-width="1.875" stroke-miterlimit="10" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                            <path d="M9.10833 1.75L5 8.33333" stroke="#666974" stroke-width="1.875"
-                                stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Filter</p>
+                    <div class="search-container">
+                        <form id="searchResidentName" method="post" action="">
+                            <input placeholder="Search Resident Name" class="search" , name="searchName" />
+                            <button type="submit" , name="search" , value="search">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="9.80541" cy="9.80589" r="7.49047" stroke="#BDBDBD" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M15.0151 15.4043L17.9518 18.3334" stroke="#BDBDBD" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+
+                            </button>
+                        </form>
                     </div>
-                    <div class="filter">
-                        <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M16 14L12 10M12 10L7.99996 14M12 10V19M20.39 16.39C21.3653 15.8583 22.1358 15.0169 22.5798 13.9986C23.0239 12.9804 23.1162 11.8432 22.8422 10.7667C22.5682 9.69016 21.9434 8.73553 21.0666 8.05346C20.1898 7.3714 19.1108 7.00075 18 7.00001H16.74C16.4373 5.82926 15.8731 4.74235 15.0899 3.82101C14.3067 2.89967 13.3248 2.16786 12.2181 1.68062C11.1113 1.19338 9.90851 0.963373 8.70008 1.0079C7.49164 1.05242 6.30903 1.37031 5.24114 1.93768C4.17325 2.50505 3.24787 3.30712 2.53458 4.2836C1.82129 5.26008 1.33865 6.38555 1.12294 7.57541C0.90723 8.76527 0.964065 9.98854 1.28917 11.1533C1.61428 12.318 2.1992 13.3939 2.99996 14.3"
-                                stroke="#666974" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                        <p>Export Table</p>
-                    </div>
+                    <a href="../resident/">
+                        <div class="filter">
+                            <p>Clear</p>
+                        </div>
+                    </a>
                 </div>
                 <table class="table" style="width: 100%;">
                     <thead>
                         <tr style="background: #F5F5F6;">
-                            <th scope="col" style="text-align: left">S/N</th>
+                            <th scope="col" style="text-align: left">ID</th>
+                            <th scope="col" style="text-align: left">Title</th>
                             <th scope="col" style="text-align: left">Name</th>
                             <th scope="col" style="text-align: left">Gender</th>
+                            <th scope="col" style="text-align: left">Phone</th>
                             <th scope="col" style="text-align: left">Age Group</th>
                             <th scope="col" style="text-align: left">Address</th>
                             <th scope="col" style="text-align: left">Action</th>
@@ -395,8 +471,10 @@ if ($conn->connect_error) {
                         <?php foreach ($templateData['result'] as $option): ?>
                             <tr>
                                 <td><?php echo $option["id"]; ?></td>
+                                <td><?php echo $option["title"]; ?></td>
                                 <td><?php echo $option["name"]; ?></td>
                                 <td><?php echo $option["gender"]; ?></td>
+                                <td><?php echo $option["phone"]; ?></td>
                                 <td><?php echo $option["age_group"]; ?></td>
                                 <td><?php echo $option["address"]; ?></td>
 
@@ -437,19 +515,6 @@ if ($conn->connect_error) {
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            // Add your validation or form submission logic here
-            var email = document.getElementById('email').value;
-            var password = document.getElementById('password').value;
-            if (email && password) {
-                // Proceed with form submission or AJAX request
-                console.log('Form submitted', { email, password });
-            }
-        });
-    </script>
 
 </body>
 

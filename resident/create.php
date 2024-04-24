@@ -1,4 +1,6 @@
-<?php session_start();
+<?php 
+ob_start();
+session_start();
 
 $servername = "localhost";
 $username = "root";
@@ -257,7 +259,7 @@ $templateData = array(
             <?php
 
         } else {
-            $inert_query = "INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES (NULL, '$first_name','$last_name','$email','$pass','resident')";
+            $inert_query = "INSERT INTO `registration` ( `first_name`, `last_name`, `email`, `password`, `role`) VALUES ( '$first_name','$last_name','$email','$pass','resident')";
             $result = $conn->query($inert_query);
             $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
             $result = $conn->query($select_query);
@@ -265,7 +267,7 @@ $templateData = array(
 
                 $row = $result->fetch_assoc();
                 $userId = $row['id'];
-                $insert_resident = "INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`,`voted_product`) VALUES (NULL, '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId', NULL)";
+                $insert_resident = "INSERT INTO `resident` ( `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`) VALUES ( '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId')";
                 $result = $conn->query($insert_resident);
 
                 if ($result == true) {

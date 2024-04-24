@@ -3,19 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 22, 2024 at 04:50 PM
+-- Generation Time: Apr 24, 2024 at 11:44 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `Green Alliance`
@@ -46,8 +40,7 @@ INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES
 (5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39),
 (8, 'Room 7, 32 Downs road', 'LU1 1QR', 1),
 (11, '1, prince sola oyewunmi way, ketu', 'LU1 1QR', 1),
-(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1),
-(16, 'Hatfied, London', 'AB12 RED', 1);
+(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1);
 
 -- --------------------------------------------------------
 
@@ -74,8 +67,7 @@ INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALU
 (142, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', NULL, 100),
 (144, 'Kenny Oyewale', '07477932119', 'GreenWich Stadiumn', NULL, 102),
 (145, 'Revolut', '07477932119', 'Room 7, 32 Downs road', NULL, 105),
-(146, 'Qwerty Company', '07477932119', 'Room 7, 32 Downs road', 17, 108),
-(147, 'Monzo bank', '07477932119', 'Room 7, 32 Downs road', 4, 111);
+(146, 'Qwerty Company', '07477932119', 'Room 7, 32 Downs road', 17, 108);
 
 -- --------------------------------------------------------
 
@@ -100,12 +92,12 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `vote_count`) VALUES
-(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', 12),
-(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 7),
-(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 7),
+(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', 8),
+(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 8),
+(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 6),
 (12, 'Oluwaseun Oyewale', 33, 'gregrgf', 'Large', 'fgfdbdbfdb', 'Moderate', 'Green energies products', 6),
 (13, 'Oluwaseun', 3200, 'dvdvvf', 'Large', 'vfddvdfd', 'Moderate', 'Green energies products', 6),
-(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', 2);
+(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', 3);
 
 -- --------------------------------------------------------
 
@@ -131,15 +123,14 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 (2, 'Dolapo', 'Oyewale', 'dolapo@gmail.com', 'qwerty', 'admin'),
 (3, 'Oluwaseun', 'Oyewale', 'oyewalekehinde734@gmail.com', 'qwerty1234', 'admin'),
 (39, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '12345', 'resident'),
+(62, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
+(64, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
 (65, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
 (66, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
 (67, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
-(68, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
 (69, 'Monzo', 'Monzo', 'tayo@green.com', '123456', 'company'),
 (72, 'Revolut', 'Revolut', 'svd', 'vdfvsv', 'company'),
-(81, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'admin'),
-(82, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'council'),
-(83, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', 'Qwerty1234', 'council'),
+(82, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', '123455', 'council'),
 (86, 'Oluwaseun', 'Oyewale', 'Red@green.com', 'Qwerretfd', 'council'),
 (88, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'council'),
 (89, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '557757676', 'council'),
@@ -164,7 +155,9 @@ INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`
 (108, 'Qwerty Company', 'Qwerty Company', 'oyewalekehinde2021@gmail.com', '12345', 'company'),
 (109, 'Patience', 'Kuda', 'patience@gmail.com', '12345', 'resident'),
 (110, 'Kevlin', 'Bamboo', 'kelvin34@gmail.com', '12345', 'resident'),
-(111, 'Monzo bank', 'Monzo bank', 'oyewalekehinde65@gmail.com', '123456', 'company');
+(111, 'Monzo bank', 'Monzo bank', 'oyewalekehinde65@gmail.com', '123456', 'company'),
+(112, 'Oluwaseun', 'Kehinde', 'kenny34@gmail.com', '12345', 'resident'),
+(113, 'Folashade', 'Oyewale', 'oyewalekenny34@gmail.com', '12345', 'resident');
 
 -- --------------------------------------------------------
 
@@ -183,21 +176,19 @@ CREATE TABLE `resident` (
   `age_group` varchar(50) NOT NULL,
   `gender` varchar(15) NOT NULL,
   `interest` varchar(100) NOT NULL DEFAULT '',
-  `voted_product` int(11) DEFAULT NULL,
-  `user` int(11) NOT NULL
+  `user` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `resident`
 --
 
-INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phone`, `area`, `age_group`, `gender`, `interest`, `voted_product`, `user`) VALUES
-(1, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
-(2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 62),
-(3, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 1, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 64),
-(4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', NULL, 65),
-(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', NULL, 103),
-(12, 'Mr', 'Kevlin', 'Bamboo', 'kelvin34@gmail.com', '95050545445', 16, 'Middle-aged adult (40-64)', 'Agender', 'Waste Reduction', NULL, 110);
+INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phone`, `area`, `age_group`, `gender`, `interest`, `user`) VALUES
+(1, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 62),
+(2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 62),
+(3, ' Mrs', ' Sharon', ' Dada', 'oyewalekehinde34@gmail.com', '07477932119', 1, 'Middle-aged adult (40-64)', 'Male', 'Energy', 64),
+(4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 65),
+(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', 103);
 
 -- --------------------------------------------------------
 
@@ -209,18 +200,23 @@ CREATE TABLE `votes` (
   `id` int(11) NOT NULL,
   `product` int(11) NOT NULL,
   `user` int(11) NOT NULL,
-  `vote` varchar(5) NOT NULL
+  `vote` varchar(5) NOT NULL,
+  `created_at` date NOT NULL DEFAULT current_timestamp(),
+  `updated_at` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `votes`
 --
 
-INSERT INTO `votes` (`id`, `product`, `user`, `vote`) VALUES
-(1, 4, 1, 'FALSE'),
-(2, 3, 1, 'TRUE'),
-(4, 11, 1, 'TRUE'),
-(6, 3, 39, 'TRUE');
+INSERT INTO `votes` (`id`, `product`, `user`, `vote`, `created_at`, `updated_at`) VALUES
+(1, 4, 1, 'TRUE', '2024-04-22', '2024-04-24'),
+(2, 3, 1, 'FALSE', '2024-04-23', '2024-04-24'),
+(4, 11, 1, 'TRUE', '2024-04-23', '2024-04-24'),
+(6, 3, 39, 'TRUE', '2024-04-27', '2024-04-23'),
+(8, 12, 1, 'TRUE', '2024-04-24', '2024-04-24'),
+(9, 13, 1, 'FALSE', '2024-04-23', '2024-04-24'),
+(10, 17, 1, 'FALSE', '2024-04-24', '2024-04-24');
 
 --
 -- Indexes for dumped tables
@@ -259,7 +255,6 @@ ALTER TABLE `registration`
 ALTER TABLE `resident`
   ADD PRIMARY KEY (`id`),
   ADD KEY `area` (`area`),
-  ADD KEY `voted_product` (`voted_product`),
   ADD KEY `user` (`user`);
 
 --
@@ -296,7 +291,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `registration`
 --
 ALTER TABLE `registration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
 
 --
 -- AUTO_INCREMENT for table `resident`
@@ -308,7 +303,7 @@ ALTER TABLE `resident`
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
@@ -332,17 +327,12 @@ ALTER TABLE `company`
 --
 ALTER TABLE `resident`
   ADD CONSTRAINT `resident_ibfk_1` FOREIGN KEY (`area`) REFERENCES `area` (`id`),
-  ADD CONSTRAINT `resident_ibfk_2` FOREIGN KEY (`voted_product`) REFERENCES `Product` (`id`),
-  ADD CONSTRAINT `resident_ibfk_3` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
+  ADD CONSTRAINT `resident_ibfk_2` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 
 --
 -- Constraints for table `votes`
 --
 ALTER TABLE `votes`
-  ADD CONSTRAINT `votes_ibfk_2` FOREIGN KEY (`product`) REFERENCES `Product` (`id`),
-  ADD CONSTRAINT `votes_ibfk_3` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
+  ADD CONSTRAINT `votes_ibfk_1` FOREIGN KEY (`product`) REFERENCES `product` (`id`),
+  ADD CONSTRAINT `votes_ibfk_2` FOREIGN KEY (`user`) REFERENCES `registration` (`id`);
 COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

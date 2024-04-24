@@ -9,5 +9,6 @@ session_destroy();
 
 // Redirect to login.php
 header("Location: index.php");
+ob_end_flush();
 exit;
 ?>
