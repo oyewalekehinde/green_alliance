@@ -175,7 +175,9 @@ if ($conn->connect_error) {
 
 
     if ($result == true) {
-      header("Location: index.php");
+     
+        header("Location: index.php");
+      
       exit;
 
     } 

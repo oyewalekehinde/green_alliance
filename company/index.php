@@ -13,6 +13,11 @@ $searchName = $_POST['searchName'];
 if (isset($searchName) && strlen($searchName) > 0 && isset($_POST['search'])) {
     $companyListQuery = "SELECT * FROM company WHERE name LIKE '%$searchName%'";
     $companyListResult = $conn->query($companyListQuery);
+} else if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    mysqli_query($conn, "DELETE FROM company WHERE id='$id'");
+    header("Location: index.php");
+    exit;
 } else {
     $companyListQuery = "SELECT * FROM `company`";
     $companyListResult = $conn->query($companyListQuery);
@@ -236,13 +241,6 @@ if ($conn->connect_error) {
 <?php include ("./include/session.php"); ?>
 
 <body>
-    <?php
-    if (isset($_GET['delete'])) {
-        $id = $_GET['delete'];
-        mysqli_query($conn, "DELETE FROM company WHERE id='$id'");
-        header("Location: index.php");
-        exit;
-    } ?>
     <div class="dashboard-container">
         <div class="sidebar">
             <img src="../images/banner.png" alt="logo" style="width: 200px; margin: 0 auto 70px; display: block;" />

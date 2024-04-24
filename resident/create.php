@@ -26,8 +26,6 @@ $result = mysqli_query($conn, $sql);
 // Store data in an array
 $dropdownData = [];
 while ($row = mysqli_fetch_assoc($result)) {
-
-
     $string1 = $row['address'];
     $string2 = $row['postcode'];
     $concatenatedString = $string1 . ", " . $string2;
@@ -39,8 +37,105 @@ while ($row = mysqli_fetch_assoc($result)) {
     $dropdownData[] = $myMap;
 }
 
+if (isset($_GET['admin'])) {
+    $fromAdmin = true;
+  }else{
+    $fromAdmin = false;
+  }
+if (isset($_POST["submit"])) {
+    $first_name = $_POST["first_name"];
+    $last_name = $_POST["last_name"];
+    $email = $_POST["email"];
+    $pass = $_POST["password"];
+    $title = $_POST["title"];
+    $gender = $_POST["gender"];
+    $ageGroup = $_POST["age_group"];
+    $area = $_POST["area"];
+    $phone = $_POST["phone"];
+    $interest = $_POST["interest"];
 
-// Pass data to the template (replace with your templating method)
+    $email_query = "SELECT * FROM registration WHERE email='$email'";
+    $result = $conn->query($email_query);
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $string1 = "A user with ";
+        $ng = $row["email"];
+        $string2 = " Exist!";
+        $generated_string = $string1 . $ng . $string2;
+        $msg = $generated_string;
+        ?>
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: '<?php echo $msg; ?>',
+                showConfirmButton: false,
+                timer: 3000,
+                heightAuto: false,
+                iconColor: "red",
+                width: 600,
+
+            });
+        </script>
+        <?php
+
+    } else {
+        $inert_query = "INSERT INTO `registration` ( `first_name`, `last_name`, `email`, `password`, `role`) VALUES ( '$first_name','$last_name','$email','$pass','resident')";
+        $result = $conn->query($inert_query);
+        $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
+        $result = $conn->query($select_query);
+        if ($result && $result->num_rows > 0) {
+
+            $row = $result->fetch_assoc();
+            $userId = $row['id'];
+            $insert_resident = "INSERT INTO `resident` ( `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`) VALUES ( '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId')";
+            $result = $conn->query($insert_resident);
+
+            if ($result == true) {
+                if ($fromAdmin) {
+                    header("Location: index.php");
+                } else {
+                    $_SESSION['name'] = $row['first_name'];
+                    $_SESSION['last_name'] = $row['last_name'];
+                    $_SESSION['id'] = $row['id'];
+                    $_SESSION['role'] = $row['role'];
+                    header("Location: ../product/index.php");
+                }
+                exit;
+            } else {
+                ?>
+                <script>
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "error",
+                        title: "something went wrong",
+                        showConfirmButton: false,
+                        timer: 1500,
+                        heightAuto: false,
+                        iconColor: "red",
+                    });
+                </script>
+                <?php
+
+            }
+        } else {
+            $msg = $conn->error;
+            ?>
+            <script>
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: '<?php echo $msg; ?>',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    heightAuto: false,
+                    iconColor: "red",
+                });
+            </script>
+            <?php
+        }
+    }
+}
 
 $templateData = array(
     "dropdownOptions" => $dropdownData,
@@ -215,106 +310,6 @@ $templateData = array(
 </head>
 
 <body>
-    <?php
-     if (isset($_GET['admin'])) {
-        $fromAdmin = true;
-      }else{
-        $fromAdmin = false;
-      }
-    if (isset($_POST["submit"])) {
-        $first_name = $_POST["first_name"];
-        $last_name = $_POST["last_name"];
-        $email = $_POST["email"];
-        $pass = $_POST["password"];
-        $title = $_POST["title"];
-        $gender = $_POST["gender"];
-        $ageGroup = $_POST["age_group"];
-        $area = $_POST["area"];
-        $phone = $_POST["phone"];
-        $interest = $_POST["interest"];
-
-        $email_query = "SELECT * FROM registration WHERE email='$email'";
-        $result = $conn->query($email_query);
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $string1 = "A user with ";
-            $ng = $row["email"];
-            $string2 = " Exist!";
-            $generated_string = $string1 . $ng . $string2;
-            $msg = $generated_string;
-            ?>
-            <script>
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: '<?php echo $msg; ?>',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    heightAuto: false,
-                    iconColor: "red",
-                    width: 600,
-
-                });
-            </script>
-            <?php
-
-        } else {
-            $inert_query = "INSERT INTO `registration` ( `first_name`, `last_name`, `email`, `password`, `role`) VALUES ( '$first_name','$last_name','$email','$pass','resident')";
-            $result = $conn->query($inert_query);
-            $select_query = "SELECT * FROM registration WHERE email='$email' AND password='$pass'";
-            $result = $conn->query($select_query);
-            if ($result && $result->num_rows > 0) {
-
-                $row = $result->fetch_assoc();
-                $userId = $row['id'];
-                $insert_resident = "INSERT INTO `resident` ( `title`, `first_name`, `last_name`,`phone`, `email`, `area`, `age_group`, `gender`, `interest`, `user`) VALUES ( '$title', '$first_name','$last_name','$phone','$email', '$area', '$ageGroup', '$gender', '$interest', '$userId')";
-                $result = $conn->query($insert_resident);
-
-                if ($result == true) {
-                    if ($fromAdmin) {
-                        header("Location: index.php");
-                    } else {
-                        $_SESSION['name'] = $row['first_name'];
-                        $_SESSION['id'] = $row['id'];
-                        $_SESSION['role'] = $row['role'];
-                        header("Location: ../dashboard.php");
-                    }
-                    exit;
-                } else {
-                    ?>
-                    <script>
-                        Swal.fire({
-                            position: "top-end",
-                            icon: "error",
-                            title: "something went wrong",
-                            showConfirmButton: false,
-                            timer: 1500,
-                            heightAuto: false,
-                            iconColor: "red",
-                        });
-                    </script>
-                    <?php
-
-                }
-            } else {
-                $msg = $conn->error;
-                ?>
-                <script>
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "error",
-                        title: '<?php echo $msg; ?>',
-                        showConfirmButton: false,
-                        timer: 1500,
-                        heightAuto: false,
-                        iconColor: "red",
-                    });
-                </script>
-                <?php
-            }
-        }
-    }
-    ?>
 
     <div class="modal">
         <div class="title">

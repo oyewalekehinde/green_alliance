@@ -14,7 +14,69 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-// echo "Connected successfully";
+
+if (isset($_POST["submit"])) {
+    $name = $_POST["name"];
+    $description = $_POST["description"];
+    $size = $_POST["size"];
+    $benefits = $_POST["benefits"];
+    $pricing = $_POST["pricing"];
+    $price = $_POST["amount"];
+
+    $product_query = "SELECT * FROM `product` WHERE LOWER(`name`)= '$name'";
+    $result = $conn->query($product_query);
+    if ($result && $result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $string1 = "A Product with ";
+        $ng = $row["name"];
+        $string2 = " Exist!";
+        $generated_string = $string1 . $ng . $string2;
+        $msg = $generated_string;
+        ?>
+        <script>
+            Swal.fire({
+                position: "top-end",
+                icon: "error",
+                title: '<?php echo $msg; ?>',
+                showConfirmButton: false,
+                timer: 3000,
+                heightAuto: false,
+                iconColor: "red",
+                width: 600,
+
+            });
+        </script>
+        <?php
+
+    } else {
+
+        $inert_query = "INSERT INTO `product` ( `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES ( '$name', '$description', '$size', '$benefits', '$pricing','$price')";
+
+        $result = $conn->query($inert_query);
+
+
+        if ($result == true) {
+            header("Location: ./index.php");
+
+        } else {
+
+            ?>
+            <script>
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: "something went wrong",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    heightAuto: false,
+                    iconColor: "red",
+                });
+            </script>
+            <?php
+        }
+    }
+
+}
 
 ?>
 <!DOCTYPE html>
@@ -167,72 +229,6 @@ if ($conn->connect_error) {
 <?php include ("./include/session.php"); ?>
 
 <body>
-    <?php
-
-    if (isset($_POST["submit"])) {
-        $name = $_POST["name"];
-        $description = $_POST["description"];
-        $size = $_POST["size"];
-        $benefits = $_POST["benefits"];
-        $pricing = $_POST["pricing"];
-        $price = $_POST["amount"];
-
-        $product_query = "SELECT * FROM `product` WHERE LOWER(`name`)= '$name'";
-        $result = $conn->query($product_query);
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            $string1 = "A Product with ";
-            $ng = $row["name"];
-            $string2 = " Exist!";
-            $generated_string = $string1 . $ng . $string2;
-            $msg = $generated_string;
-            ?>
-            <script>
-                Swal.fire({
-                    position: "top-end",
-                    icon: "error",
-                    title: '<?php echo $msg; ?>',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    heightAuto: false,
-                    iconColor: "red",
-                    width: 600,
-
-                });
-            </script>
-            <?php
-
-        } else {
-
-            $inert_query = "INSERT INTO `product` ( `name`, `description`, `size`, `benefits`, `pricing_categories`,`price`) VALUES ( '$name', '$description', '$size', '$benefits', '$pricing','$price')";
-
-            $result = $conn->query($inert_query);
-
-
-            if ($result == true) {
-                header("Location: ./index.php");
-
-            } else {
-
-                ?>
-                <script>
-                    Swal.fire({
-                        position: "top-end",
-                        icon: "error",
-                        title: "something went wrong",
-                        showConfirmButton: false,
-                        timer: 1500,
-                        heightAuto: false,
-                        iconColor: "red",
-                    });
-                </script>
-                <?php
-            }
-        }
-
-    }
-
-    ?>
 
     <div class="modal">
         <div class="title">

@@ -206,9 +206,15 @@ if ($conn->connect_error) {
         if ($result && $result->num_rows > 0) {
           $row = $result->fetch_assoc();
           $_SESSION['name'] = $row['first_name'];
+          $_SESSION['last_name'] = $row['last_name'];
           $_SESSION['id'] = $row['id'];
           $_SESSION['role'] = $row['role'];
-          header("Location: dashboard.php");
+          if (($row['role'] === 'admin')) {
+            header("Location: dashboard.php");
+    
+          } else {
+            header("Location: ./product/index.php");
+          }
           exit;
         }
       } else {

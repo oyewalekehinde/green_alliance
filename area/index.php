@@ -1,4 +1,6 @@
 <?php
+
+ob_start();
 session_start();
 $servername = "localhost";
 $username = "root";
@@ -13,7 +15,12 @@ $searchName = $_POST['searchName'];
 if (isset($searchName) && strlen($searchName) > 0 && isset($_POST['search'])) {
     $areaListQuery = "SELECT * FROM area WHERE address LIKE '%$searchName%'";
     $areaListResult = $conn->query($areaListQuery);
-} else {
+} else  if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    mysqli_query($conn, "DELETE FROM area WHERE id='$id'");
+    header("Location: index.php");
+    exit;
+}  else {
     $areaListQuery = "SELECT * FROM `area`";
     $areaListResult = $conn->query($areaListQuery);
 }
@@ -232,13 +239,6 @@ if ($conn->connect_error) {
 <?php include ("../include/session.php"); ?>
 
 <body>
-    <?php
-    if (isset($_GET['delete'])) {
-        $id = $_GET['delete'];
-        mysqli_query($conn, "DELETE FROM area WHERE id='$id'");
-        header("Location: index.php");
-        exit;
-    } ?>
     <div class="dashboard-container">
         <div class="sidebar">
             <img src="../images/banner.png" alt="logo" style="width: 200px; margin: 0 auto 70px; display: block;" />

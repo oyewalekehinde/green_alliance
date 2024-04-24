@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 24, 2024 at 11:44 AM
+-- Generation Time: Apr 24, 2024 at 02:33 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -33,14 +33,7 @@ CREATE TABLE `area` (
 --
 
 INSERT INTO `area` (`id`, `address`, `postcode`, `user_id`) VALUES
-(1, 'London, United Kingdom', 'LU1 1QR', 1),
-(2, '11b, Oko Awo street, Victoria island', 'SE25 5PU', 1),
-(3, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
-(4, 'Room 7, 32 Downs road', 'AL10 9AB', 1),
-(5, 'Emirate Staduim, Woolwich', 'EW2 2W2', 39),
-(8, 'Room 7, 32 Downs road', 'LU1 1QR', 1),
-(11, '1, prince sola oyewunmi way, ketu', 'LU1 1QR', 1),
-(14, '1, prince sola oyewunmi way, ketu', 'JUNH GFD', 1);
+(1, ' 32 Downs road', 'LU1 1QR', 3);
 
 -- --------------------------------------------------------
 
@@ -62,12 +55,9 @@ CREATE TABLE `company` (
 --
 
 INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALUES
-(131, 'Kenny Oyewale', '08028864914', '1 olushola Adewunmi road Ikeja', 3, 1),
-(140, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', 3, 1),
-(142, 'Kenny Oyewale', '07477932119', 'Room 7, 32 Downs road', NULL, 100),
-(144, 'Kenny Oyewale', '07477932119', 'GreenWich Stadiumn', NULL, 102),
-(145, 'Revolut', '07477932119', 'Room 7, 32 Downs road', NULL, 105),
-(146, 'Qwerty Company', '07477932119', 'Room 7, 32 Downs road', 17, 108);
+(2, 'Qwerty Company', '07477932119', 'Room 7, 32 Downs road', 13, 8),
+(3, 'Revolut', '07477932119', 'Room 7, 32 Downs road', 2, 15),
+(4, 'Revolut', '07477932119', 'Room 7, 32 Downs road', 3, 16);
 
 -- --------------------------------------------------------
 
@@ -77,7 +67,7 @@ INSERT INTO `company` (`id`, `name`, `phone`, `address`, `product`, `user`) VALU
 
 CREATE TABLE `product` (
   `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
+  `name` text NOT NULL,
   `price` float NOT NULL DEFAULT 0,
   `description` text NOT NULL,
   `size` varchar(15) NOT NULL,
@@ -92,12 +82,21 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`id`, `name`, `price`, `description`, `size`, `benefits`, `pricing_categories`, `class`, `vote_count`) VALUES
-(3, 'Water bottle', 100, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Premium', 'Green energies products', 8),
-(4, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 8),
-(11, 'Water bottle', 120, 'Hey guys! Faramove is now in Lagos. For Lagos users, use the coupon code CeKnttsVOK to get discounted price.', 'Small', 'it is benefitials', 'Affordable', 'Green energies products', 6),
-(12, 'Oluwaseun Oyewale', 33, 'gregrgf', 'Large', 'fgfdbdbfdb', 'Moderate', 'Green energies products', 6),
-(13, 'Oluwaseun', 3200, 'dvdvvf', 'Large', 'vfddvdfd', 'Moderate', 'Green energies products', 6),
-(17, 'AGORA_APP_ID', 1200, 'fegdfudsbjsdbnvufds', 'Small', 'jdvnbduviufsvfs', 'Premium', 'Green energies products', 3);
+(1, 'Reduce, Reuse, Recyle', 200, 'To reduce waste in the community', 'Small', 'it is very Good', 'Affordable', 'Green energies products', 1),
+(2, 'Implementing waste reduction strategies', 100, 'Implementing waste reduction strategies', 'Medium', 'Implementing waste reduction strategies', 'Affordable', 'Green energies products', 1),
+(3, 'Recycling materials like paper, plastic, glass, and metal.', 200, 'Recycling materials like paper, plastic, glass, and metal.', 'Small', 'Recycling materials like paper, plastic, glass, and metal.', 'Moderate', 'Green energies products', 1),
+(4, 'Composting', 20, 'Composting', 'Small', 'Composting', 'Premium', 'Green energies products', 1),
+(5, 'Turning organic waste into nutrient-rich compost for gardens', 20, 'Turning organic waste into nutrient-rich compost for gardens', 'Medium', 'Turning organic waste into nutrient-rich compost for gardens', 'Affordable', 'Green energies products', 0),
+(6, 'Energy Conservation:', 10, 'Energy Conservation:', 'Medium', 'Energy Conservation:', 'Affordable', 'Green energies products', 0),
+(7, 'Using energy-efficient appliances and lighting.', 200, 'Using energy-efficient appliances and lighting.', 'Medium', 'Using energy-efficient appliances and lighting.', 'Affordable', 'Green energies products', 0),
+(8, 'Turning off lights and electronics when not in use', 30, 'Turning off lights and electronics when not in use', 'Small', 'Turning off lights and electronics when not in use', 'Moderate', 'Green energies products', 0),
+(9, 'Water Conservation', 200, 'Water Conservation', 'Medium', 'Water Conservation', 'Affordable', 'Green energies products', 0),
+(10, 'Fixing leaks and using low-flow fixtures', 200, 'Fixing leaks and using low-flow fixtures', 'Medium', 'Fixing leaks and using low-flow fixtures', 'Premium', 'Green energies products', 0),
+(11, 'Collecting rainwater for watering plants', 20, 'Collecting rainwater for watering plants', 'Medium', 'Collecting rainwater for watering plants', 'Moderate', 'Green energies products', 1),
+(12, 'Reusable Water Bottles', 200, 'Stainless steel or glass bottles to reduce single-use plastic', 'Small', 'for drinking Water', 'Affordable', 'Green energies products', 0),
+(13, 'Bamboo Products', 100, 'Biodegradable and sustainable alternative to plastic', 'Medium', 'it is use for building', 'Moderate', 'Green energies products', 0),
+(14, 'LED Bulbs', 200, 'Energy-efficient lighting solutions with a longer lifespan.', 'Medium', 'it is use for lighting', 'Moderate', 'Green energies products', 1),
+(15, 'Cloth Shopping Bags', 200, 'Reusable fabric bags to reduce reliance on plastic bags', 'Medium', 'it is use for shopping', 'Moderate', 'Green energies products', 1);
 
 -- --------------------------------------------------------
 
@@ -120,44 +119,14 @@ CREATE TABLE `registration` (
 
 INSERT INTO `registration` (`id`, `first_name`, `last_name`, `email`, `password`, `role`) VALUES
 (1, 'admin', 'admin', 'admin@greenalliance.com', '12345', 'admin'),
-(2, 'Dolapo', 'Oyewale', 'dolapo@gmail.com', 'qwerty', 'admin'),
-(3, 'Oluwaseun', 'Oyewale', 'oyewalekehinde734@gmail.com', 'qwerty1234', 'admin'),
-(39, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '12345', 'resident'),
-(62, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
-(64, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
-(65, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
-(66, 'Toba', 'Adeoye', 'tobar@red.com', 'qwerty1234', 'resident'),
-(67, 'Monzo', 'Monzo', 'red@red.com', '12345', 'company'),
-(69, 'Monzo', 'Monzo', 'tayo@green.com', '123456', 'company'),
-(72, 'Revolut', 'Revolut', 'svd', 'vdfvsv', 'company'),
-(82, 'Oluwaseun', 'Kehinde', 'Oyewalekehinde34@green.com', '123455', 'council'),
-(86, 'Oluwaseun', 'Oyewale', 'Red@green.com', 'Qwerretfd', 'council'),
-(88, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '53553', 'council'),
-(89, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '557757676', 'council'),
-(90, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com44', '33242', 'council'),
-(91, 'Revolut', 'Revolut', 'oyewalekehinde94@gmail.com', 'jbjbbjjbbj', 'company'),
-(92, 'Revolut', 'Revolut', 'oyewalekehinde64@gmail.com', '888778', 'company'),
-(93, 'Revolut', 'Revolut', 'oyewalekehinde39@gmail.com', '886688688', 'company'),
-(94, 'Revolut', 'Revolut', 'oyewalekehin34@gmail.com', '666788', 'company'),
-(95, 'Monzo', 'Monzo', 'oyewalekehinddffdfsffe34@gmail.com', 'ffwwffw', 'company'),
-(96, 'Monzo', 'Monzo', 'oyewalekehindewewedwd34@gmail.com', '332232', 'company'),
-(97, 'Revolut', 'Revolut', 'oyewalekehinde3wwewd4@gmail.com', '223232322', 'company'),
-(98, 'Revolut', 'Revolut', 'oyewalekehindessdsds34@gmail.com', 'sdewew', 'company'),
-(99, 'Revolut', 'Revolut', 'oyewalekehinde454@gmail.com', 'wr4tt3434', 'company'),
-(100, 'Kenny Oyewale', 'Kenny Oyewale', 'oyewalekehie34@gmail.com', '56566555', 'company'),
-(101, 'Simileoluwa Bolajoko', 'Simileoluwa Bolajoko', 'oyewalekehindfessvde34@gmail.com', 's6trerggrrg', 'company'),
-(102, 'Kenny Oyewale', 'Kenny Oyewale', 'oyewalekehindedvdvdv34@gmail.com', '454464364', 'company'),
-(103, 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '664664646', 'resident'),
-(104, 'Oluwaseun', 'Oyewale', 'oyewalekehinde343rdc@gmail.com', '54554', 'resident'),
-(105, 'Revolut', 'Revolut', 'dsddoyewalekehinde34@gmail.com', '35345trgf', 'company'),
-(106, 'dfewfewfewf', 'efewfewfw', 'oyewalekehinde34@gmail.comwefewfew', 'rewrwefewfw', 'council'),
-(107, 'Oluwaseun', 'Oyewale', 'oyewalekehindeedac34@gmail.com', '3555', 'resident'),
-(108, 'Qwerty Company', 'Qwerty Company', 'oyewalekehinde2021@gmail.com', '12345', 'company'),
-(109, 'Patience', 'Kuda', 'patience@gmail.com', '12345', 'resident'),
-(110, 'Kevlin', 'Bamboo', 'kelvin34@gmail.com', '12345', 'resident'),
-(111, 'Monzo bank', 'Monzo bank', 'oyewalekehinde65@gmail.com', '123456', 'company'),
-(112, 'Oluwaseun', 'Kehinde', 'kenny34@gmail.com', '12345', 'resident'),
-(113, 'Folashade', 'Oyewale', 'oyewalekenny34@gmail.com', '12345', 'resident');
+(3, 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '12345', 'council'),
+(4, 'Oluwaseun', 'Oyewale', 'oyewalekehinde35@gmail.com', '12345', 'resident'),
+(5, 'Oluwaseun', 'Oyewale', 'oyewalekehinde74@gmail.com', '12345', 'resident'),
+(6, 'Oluwaseun', 'Oyewale', 'oyewalekehinde434@gmail.com', '12345', 'resident'),
+(8, 'Qwerty Company', 'Qwerty Company', 'oyewalekehinde44@gmail.com', '12345', 'company'),
+(9, 'Taiwo', 'Oyewale', 'oyewaletaiwo34@gmail.com', '12345', 'resident'),
+(15, 'Revolut', 'Revolut', 'oyewalekehindee34@gmail.com', '12345', 'company'),
+(16, 'Revolut', 'Revolut', 'oyewalekehinde134@gmail.com', '12345', 'company');
 
 -- --------------------------------------------------------
 
@@ -184,11 +153,10 @@ CREATE TABLE `resident` (
 --
 
 INSERT INTO `resident` (`id`, `title`, `first_name`, `last_name`, `email`, `phone`, `area`, `age_group`, `gender`, `interest`, `user`) VALUES
-(1, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 62),
-(2, 'Mr.', 'Oluwaseun', 'Oyewale', 'oyewalekehinde34@gmail.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 62),
-(3, ' Mrs', ' Sharon', ' Dada', 'oyewalekehinde34@gmail.com', '07477932119', 1, 'Middle-aged adult (40-64)', 'Male', 'Energy', 64),
-(4, 'Mr.', 'Toba', 'Adeoye', 'tobar@red.com', '', 2, 'Child (0-12)', 'Male', 'Renewable Energy', 65),
-(8, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde365@gmail.com', '07477932119', 3, 'Teenager (13-19)', 'Non-binary', 'Energy', 103);
+(1, 'Dr', 'Oluwaseun', 'Oyewale', 'oyewalekehinde35@gmail.com', '07477932119', 1, 'Middle-aged adult (40-64)', 'Non-binary', 'Waste Reduction', 4),
+(2, 'Ms', 'Oluwaseun', 'Oyewale', 'oyewalekehinde74@gmail.com', '07477932119', 1, 'Teenager (13-19)', 'Female', 'Waste Reduction', 5),
+(3, 'Dr', 'Oluwaseun', 'Oyewale', 'oyewalekehinde434@gmail.com', '07477932119', 1, 'Teenager (13-19)', 'Male', 'Waste Reduction', 6),
+(4, 'Prof', 'Taiwo', 'Oyewale', 'oyewaletaiwo34@gmail.com', '07477932119', 1, 'Young Adult (20-39)', 'Male', 'Waste Reduction', 9);
 
 -- --------------------------------------------------------
 
@@ -210,13 +178,13 @@ CREATE TABLE `votes` (
 --
 
 INSERT INTO `votes` (`id`, `product`, `user`, `vote`, `created_at`, `updated_at`) VALUES
-(1, 4, 1, 'TRUE', '2024-04-22', '2024-04-24'),
-(2, 3, 1, 'FALSE', '2024-04-23', '2024-04-24'),
-(4, 11, 1, 'TRUE', '2024-04-23', '2024-04-24'),
-(6, 3, 39, 'TRUE', '2024-04-27', '2024-04-23'),
-(8, 12, 1, 'TRUE', '2024-04-24', '2024-04-24'),
-(9, 13, 1, 'FALSE', '2024-04-23', '2024-04-24'),
-(10, 17, 1, 'FALSE', '2024-04-24', '2024-04-24');
+(1, 2, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(2, 3, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(3, 4, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(4, 1, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(5, 15, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(6, 14, 9, 'TRUE', '2024-04-24', '2024-04-24'),
+(7, 11, 9, 'TRUE', '2024-04-24', '2024-04-24');
 
 --
 -- Indexes for dumped tables
@@ -273,37 +241,37 @@ ALTER TABLE `votes`
 -- AUTO_INCREMENT for table `area`
 --
 ALTER TABLE `area`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `company`
 --
 ALTER TABLE `company`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `registration`
 --
 ALTER TABLE `registration`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `resident`
 --
 ALTER TABLE `resident`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `votes`
 --
 ALTER TABLE `votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
